@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass, field
 from typing import Any
 from datetime import datetime
@@ -45,7 +46,7 @@ TOKEN_ABI = """
         "outputs": [
             { "internalType": "string", "name": "", "type": "string" }
         ], "payable": false, "stateMutability": "view", "type": "function"
-    },
+    }
 ]
 """
 
@@ -79,22 +80,22 @@ class PairPriceService(WebPriceService):
             print("Token0: ", token0_symbol) # WPLS
             print("Token0 Decimals: ", token0_decimals) # 18
 
-            token1_name = token1_contract.functions.symbol().call()
-            token1_symbol = token1_contract.functions.decimals().call()
+            token1_symbol = token1_contract.functions.symbol().call()
+            token1_decimals = token1_contract.functions.decimals().call()
 
-            print("Token1: ", token1_name) # DAI
-            print("Token1 Decimals: ", token1_symbol) # 18
+            print("Token1: ", token1_symbol) # DAI
+            print("Token1 Decimals: ", token1_decimals) # 18
 
-            if asset.lower() not in [token0_symbol.lower(), token1_name.lower()]:
+            if asset.lower() not in token0_symbol.lower():
                 raise Exception("Asset not found in pair")
             
-            if currency.lower() not in [token0_symbol.lower(), token1_name.lower()]:
+            if currency.lower() not in token1_symbol.lower():
                 raise Exception("Currency not found in pair")
             
             [reserve0, reserve1, timestamp] = pair_contract.functions.getReserves().call()
 
-            decimals = token1_symbol
-            if token1_name.lower() != currency.lower():
+            decimals = token1_decimals
+            if token1_symbol.lower() != currency.lower():
                 reserve0, reserve1 = reserve1, reserve0
                 decimals = token0_decimals
 
@@ -114,3 +115,10 @@ class PairPriceSource(PriceSource):
     currency: str = ""
     addr: str = ""
     service: PairPriceService = field(default_factory=PairPriceService, init=False)
+
+async def call_fetch_new_datapoint():
+    source = PairPriceSource(asset="pls", currency="dai")
+    [price, timestamp] = await source.fetch_new_datapoint()
+    print(f"price: {price}, timestamp: {timestamp}")
+
+asyncio.run(call_fetch_new_datapoint())
