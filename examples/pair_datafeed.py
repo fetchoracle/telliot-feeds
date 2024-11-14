@@ -7,6 +7,9 @@ from web3 import Web3
 from telliot_feeds.pricing.price_service import WebPriceService
 from telliot_feeds.pricing.price_source import PriceSource
 from telliot_feeds.dtypes.datapoint import OptionalDataPoint
+from telliot_feeds.datafeed import DataFeed
+from telliot_feeds.sources.price_aggregator import PriceAggregator
+from telliot_feeds.queries.price.spot_price import SpotPrice
 
 PAIR_ABI = """
 [
@@ -116,9 +119,26 @@ class PairPriceSource(PriceSource):
     addr: str = ""
     service: PairPriceService = field(default_factory=PairPriceService, init=False)
 
-async def call_fetch_new_datapoint():
-    source = PairPriceSource(asset="pls", currency="dai")
-    [price, timestamp] = await source.fetch_new_datapoint()
-    print(f"price: {price}, timestamp: {timestamp}")
+pls_usd_feed = DataFeed(
+    query=SpotPrice(asset="pls", currency="usd"),
+    source=PriceAggregator(
+        asset="pls",
+        currency="usd",
+        algorithm="mean",
+        sources=[PairPriceSource(asset="pls", currency="dai")],
+    )
+)
+async def call_datafeed():
+    await pls_usd_feed.source.fetch_new_datapoint()
+    latest_data = pls_usd_feed.source.latest
+    query = pls_usd_feed.query
+    query_id = query.query_id
+    print(f"""
+        query: {query}
+        query_id: {query_id.hex()}
 
-asyncio.run(call_fetch_new_datapoint())
+        latest_data price: {latest_data[0]}
+        latest_data timestamp: {latest_data[1]}
+    """)
+
+asyncio.run(call_datafeed())
