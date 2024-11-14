@@ -142,6 +142,11 @@ query_catalog.add_entry(
     title="PLS/USD spot price",
     q=SpotPrice(asset="pls", currency="usd"),
 )
+query_catalog.add_entry(
+    tag="example-feed",
+    title="Example feed",
+    q=SpotPrice(asset="pls", currency="usd"),
+)
 
 query_catalog.add_entry(
     tag="eth-usd-spot",
