@@ -228,6 +228,14 @@ async def report(
         elif query_tag is not None:
             try:
                 chosen_feed: DataFeed[Any] = CATALOG_FEEDS[query_tag]  # type: ignore
+
+                if query_tag == "example-feed":
+                    click.echo("Running example feed. Fetching price and exiting...")
+                    [price,timestamp] = await chosen_feed.source.fetch_new_datapoint()
+                    click.echo(f"Price: {price}")
+                    click.echo(f"Timestamp: {timestamp}")
+                    return
+
             except KeyError:
                 click.echo(f"No corresponding datafeed found for query tag: {query_tag}\n")
                 return
