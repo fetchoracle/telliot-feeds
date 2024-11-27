@@ -79,7 +79,8 @@ from telliot_feeds.feeds.ogv_eth_feed import ogv_eth_median_feed
 from telliot_feeds.feeds.olympus import ohm_eth_median_feed
 from telliot_feeds.feeds.op_usd_feed import op_usd_median_feed
 from telliot_feeds.feeds.ousd_usd_feed import ousd_usd_median_feed
-from telliot_feeds.feeds.pls_usd_feed import pls_usd_median_feed
+from telliot_feeds.feeds.pls_usd_feed import pls_usd_feed
+from telliot_feeds.feeds.pls_usd_median_feed import pls_usd_median_feed
 from telliot_feeds.feeds.primeeth_eth_feed import primeeth_eth_median_feed
 from telliot_feeds.feeds.pufeth_usd_feed import pufeth_usd_median_feed
 from telliot_feeds.feeds.pyth_usd_feed import pyth_usd_median_feed
@@ -126,8 +127,10 @@ from telliot_feeds.feeds.wsteth_feed import wsteth_usd_median_feed
 from telliot_feeds.feeds.wusdm_usd_feed import wusdm_usd_feed
 from telliot_feeds.feeds.xdai_usd_feed import xdai_usd_median_feed
 from telliot_feeds.feeds.yfi_usd_feed import yfi_usd_median_feed
+from telliot_feeds.feeds.fetch_usd_feed import fetch_usd_feed
 
 CATALOG_FEEDS: Dict[str, DataFeed[Any]] = {
+    "fetch-usd-spot": fetch_usd_feed,
     "ampleforth-custom": ampl_usd_vwap_feed,
     "ampleforth-uspce": uspce_feed,
     "eth-jpy-spot": eth_jpy_median_feed,
@@ -150,7 +153,8 @@ CATALOG_FEEDS: Dict[str, DataFeed[Any]] = {
     "string-query-example": string_query_feed,
     "tellor-rng-example": tellor_rng_feed,
     "twap-eth-usd-example": twap_30d_example_manual_feed,
-    "pls-usd-spot": pls_usd_median_feed,
+    "pls-usd-median-spot": pls_usd_median_feed,
+    "pls-usd-spot": pls_usd_feed,
     "eth-usd-spot": eth_usd_median_feed,
     "btc-usd-spot": btc_usd_median_feed,
     "trb-usd-spot": trb_usd_median_feed,

@@ -177,7 +177,11 @@ class Tellor360Reporter(Stake):
 
         # 12hrs in seconds is 43200
         try:
-            reporter_lock = 43200 / math.floor(staker_balance / current_stake_amount)
+            reporter_lock, status = await self.oracle.read(func_name="getReportingLock")
+            if not status.ok:
+                msg = "Unable to read reporter lock time"
+                return error_status(msg, log=logger.error)
+            reporter_lock = reporter_lock / math.floor(staker_balance / current_stake_amount)
         except ZeroDivisionError:  # Tellor Playground contract's stakeAmount is 0
             reporter_lock = 0
         time_remaining = round(self.stake_info.last_report_time + reporter_lock - time.time())
