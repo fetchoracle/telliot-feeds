@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 CURRENCIES = ["usd", "jpy", "eth", "btc"]
 SPOT_PRICE_PAIRS = [
+    "FETCH/USD",
     "ETH/USD",
     "BTC/USD",
     "TRB/USD",
