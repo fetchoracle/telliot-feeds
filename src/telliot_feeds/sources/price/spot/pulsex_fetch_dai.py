@@ -118,7 +118,7 @@ if __name__ == "__main__":
     import asyncio
 
     async def main() -> None:
-        source = PulseXFETCHDAISource(asset="fetch", currency="usd")
+        source = PulseXFETCHDAISource(asset="fetch", currency="pls")
         datapoint = await source.fetch_new_datapoint()
         print(datapoint)
 

@@ -168,8 +168,9 @@ if __name__ == "__main__":
     import asyncio
 
     async def main() -> None:
-        source = PulsechainPulseXSource(asset="pls", currency="usd")
-        datapoint = await source.fetch_new_datapoint()
-        print(datapoint)
+        for currency in DEFAULT_LP_CURRENCIES:
+            source = PulsechainPulseXSource(asset="pls", currency=currency)
+            datapoint = await source.fetch_new_datapoint()
+            print(f"Data point for {currency}: {datapoint}")
 
     asyncio.run(main())
