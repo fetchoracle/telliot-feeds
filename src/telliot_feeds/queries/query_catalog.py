@@ -138,9 +138,21 @@ query_catalog.add_entry(
 )
 
 query_catalog.add_entry(
-    tag="pls-usd-spot",
+    tag="pls-usd-median-spot",
     title="PLS/USD spot price",
     q=SpotPrice(asset="pls", currency="usd"),
+)
+
+query_catalog.add_entry(
+    tag="pls-usd-spot",
+    title="PLS/USD PulseX spot price",
+    q=SpotPrice(asset="pls", currency="usd"),
+)
+
+query_catalog.add_entry(
+    tag="fetch-usd-spot",
+    title="FETCH/USD spot price",
+    q=SpotPrice(asset="fetch", currency="usd"),
 )
 
 query_catalog.add_entry(

@@ -84,7 +84,7 @@ class PriceAggregator(DataSource[float]):
         prices = []
         weights = []
         for datapoint in datapoints:
-            v, _ = datapoint  # Ignore input timestamps
+            v = datapoint[0]  # Ignore input timestamps
             w = datapoint[2] if len(datapoint) == 3 else None
             # Check for valid answers
             if v is not None and isinstance(v, float):
