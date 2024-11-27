@@ -2,18 +2,15 @@ import os
 from decimal import Decimal
 from dataclasses import dataclass
 from dataclasses import field
-from typing import Any
+from typing import Any, Union
 
 from dotenv import load_dotenv
+from web3 import Web3
 
-from telliot_feeds.dtypes.datapoint import OptionalDataPoint
+from telliot_feeds.dtypes.datapoint import OptionalDataPoint, OptionalWeightedDataPoint
 from telliot_feeds.pricing.price_service import WebPriceService
 from telliot_feeds.pricing.price_source import PriceSource
 from telliot_feeds.utils.log import get_logger
-
-from web3 import Web3
-import requests
-import math
 
 load_dotenv()
 
@@ -85,15 +82,15 @@ class PulsechainPulseXService(WebPriceService):
         kwargs["name"] = "LiquidLoans PulseX Price Service"
         kwargs["url"] = os.getenv("LP_PULSE_NETWORK_URL", "https://rpc.pulsechain.com")
         kwargs["timeout"] = 10.0
-        self.debugging_price = os.getenv("DEBUGGING_PRICE", 'False').lower() in ('true', '1', 't')
-        self.tolerance = float(os.getenv("PRICE_TOLERANCE", 1e-2))
         super().__init__(**kwargs)
 
     def _get_token_names(self, currency: str):
         token0, token1 = pls_lps_order[currency].split('/')
         return token0.strip().upper(), token1.strip().upper()
     
-    async def get_price(self, asset: str, currency: str) -> OptionalDataPoint[float]:
+    async def get_price(
+        self, asset: str, currency: str
+    ) -> Union[OptionalWeightedDataPoint[float], OptionalDataPoint[float]]:
         """Implement PriceServiceInterface
 
         This implementation gets the price from the Pulsechain PulseX Service
@@ -122,7 +119,7 @@ class PulsechainPulseXService(WebPriceService):
             if "pls" not in token0.strip():
                 reserve0, reserve1 = reserve1, reserve0
 
-            logger.info(f"""
+            logger.debug(f"""
                 Debugging reservers for {asset}-{currency}:
                 reserve0: {reserve0}
                 reserve1: {reserve1}

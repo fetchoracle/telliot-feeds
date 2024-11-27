@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from dataclasses import field
-from typing import Any
+from typing import Any, Union
 
 from dotenv import load_dotenv
 
-from telliot_feeds.dtypes.datapoint import OptionalDataPoint
+from telliot_feeds.dtypes.datapoint import OptionalDataPoint, OptionalWeightedDataPoint
 from telliot_feeds.pricing.price_service import WebPriceService
 from telliot_feeds.pricing.price_source import PriceSource
 from telliot_feeds.utils.log import get_logger
@@ -38,11 +38,14 @@ class PulseXFETCHDAIService(WebPriceService):
 
     def __init__(self, **kwargs: Any) -> None:
         kwargs["name"] = "Fetch Price Service"
+        # TODO: set default URL to https://rpc.pulsechain.com or configure LP_PULSE_NETWORK_URL env var
         kwargs["url"] = os.getenv("LP_PULSE_NETWORK_URL", "https://rpc.v4.testnet.pulsechain.com")
         kwargs["timeout"] = 10.0
         super().__init__(**kwargs)
 
-    async def get_price(self, asset: str, currency: str) -> OptionalDataPoint[float]:
+    async def get_price(
+        self, asset: str, currency: str
+    ) -> Union[OptionalWeightedDataPoint[float], OptionalDataPoint[float]]:
         asset = asset.lower()
         currency = currency.lower()
 
@@ -58,6 +61,7 @@ class PulseXFETCHDAIService(WebPriceService):
 
         w3 = Web3(Web3.HTTPProvider(self.url, request_kwargs={"timeout": self.timeout}))
 
+        # TODO: set default WPLS/FETCH pair to a mainnet address or configure LP_WPLS_FETCH env var
         lp_wpls_fetch = w3.toChecksumAddress(os.getenv("LP_WPLS_FETCH", "0x36b7D3C9Dd22050d06A9D262640Ae3D626e77439"))
         try:
             contract = w3.eth.contract(address=lp_wpls_fetch, abi=GET_RESERVERS_ABI)
@@ -77,6 +81,7 @@ class PulseXFETCHDAIService(WebPriceService):
             )
             return None, None
 
+        # TODO: set default WPLS/DAI pair to a mainnet address or configure LP_WPLS_TDAI env var
         lp_wpls_tdai = w3.toChecksumAddress(os.getenv("LP_WPLS_TDAI", "0xA2D510bf42D2B9766DB186F44a902228E76ef262"))
         pls_price = None
         try:        
