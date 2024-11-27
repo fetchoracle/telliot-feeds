@@ -163,3 +163,13 @@ class PulsechainPulseXSource(PriceSource):
     currency: str = ""
     addr: str = ""
     service: PulsechainPulseXService = field(default_factory=PulsechainPulseXService, init=False)
+
+if __name__ == "__main__":
+    import asyncio
+
+    async def main() -> None:
+        source = PulsechainPulseXSource(asset="pls", currency="usd")
+        datapoint = await source.fetch_new_datapoint()
+        print(datapoint)
+
+    asyncio.run(main())
