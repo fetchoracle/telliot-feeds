@@ -2,7 +2,7 @@ import statistics
 
 import pytest
 
-from telliot_feeds.feeds.pls_usd_feed import pls_usd_median_feed
+from telliot_feeds.feeds.pls_usd_median_feed import pls_usd_median_feed
 
 
 @pytest.mark.asyncio

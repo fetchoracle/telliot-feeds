@@ -40,7 +40,7 @@ from telliot_feeds.feeds.fil_usd_feed import fil_usd_median_feed
 from telliot_feeds.feeds.frxeth_usd_feed import frxeth_usd_median_feed
 from telliot_feeds.feeds.matic_usd_feed import matic_usd_median_feed
 from telliot_feeds.feeds.mnt_usd_feed import mnt_usd_median_feed
-from telliot_feeds.feeds.pls_usd_feed import pls_usd_median_feed
+from telliot_feeds.feeds.pls_usd_median_feed import pls_usd_median_feed
 from telliot_feeds.feeds.sfuel_helper_feed import sfuel_helper_feed
 from telliot_feeds.feeds.tara_usd_feed import tara_usd_median_feed
 from telliot_feeds.feeds.tlos_usd_feed import tlos_usd_median_feed
