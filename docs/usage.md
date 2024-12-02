@@ -71,13 +71,13 @@ Options:
                                   Address of custom autopay contract
   -360, --tellor-360 / -flex, --tellor-flex
                                   Choose between Tellor 360 or Flex contracts
-  -s, --stake FLOAT               ❗Telliot will automatically stake more TRB(PLS in Pulsechain)
+  -s, --stake FLOAT               ❗Telliot will automatically stake more TRB(FETCH in Pulsechain)
                                   if your stake is below or falls below the
                                   stake amount required to report. If you
                                   would like to stake more than required,
                                   enter the TOTAL stake amount you wish to be
                                   staked. For example, if you wish to stake
-                                  1000 TRB, enter 1000.
+                                  1000 FETCH, enter 1000.
   -mnb, --min-native-token-balance FLOAT
                                   Minimum native token balance required to
                                   report. Denominated in ether.
@@ -219,7 +219,7 @@ The reporter will automatically attempt to stake the required amount, but if you
 telliot report -a acct1 -s 2000 -ncr -rf
 ```
 
-If the reporter account's actual stake is reduced after a dispute, the reporter will attempt to stake the difference in TRB(PLS in Pulsechain) to return to the original desired stake amount.
+If the reporter account's actual stake is reduced after a dispute, the reporter will attempt to stake the difference in TRB(FETCH in Pulsechain) to return to the original desired stake amount.
 
 ### Withdraw Stake
 
