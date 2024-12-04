@@ -11,6 +11,7 @@ from telliot_feeds.dtypes.datapoint import datetime_now_utc
 from telliot_feeds.dtypes.datapoint import OptionalDataPoint
 from telliot_feeds.pricing.price_source import PriceSource
 from telliot_feeds.utils.log import get_logger
+from telliot_feeds.utils.discord import price_submitted
 
 
 logger = get_logger(__name__)
@@ -92,7 +93,7 @@ class PriceAggregator(DataSource[float]):
         result = self._algorithm(prices)
         datapoint = (result, datetime_now_utc())
         self.store_datapoint(datapoint)
-
+        price_submitted(result) #Price for discord notification
         logger.info("Feed Price: {} reported at time {}".format(datapoint[0], datapoint[1]))
         logger.info("Number of sources used in aggregate: {}".format(len(prices)))
 
