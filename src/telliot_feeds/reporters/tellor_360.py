@@ -1,7 +1,7 @@
 import asyncio
 import math
 import time
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Any
 from typing import Dict
 from typing import Optional
@@ -37,6 +37,7 @@ from telliot_feeds.utils.reporter_utils import is_online
 from telliot_feeds.utils.reporter_utils import suggest_random_feed
 from telliot_feeds.utils.reporter_utils import tkn_symbol
 from telliot_feeds.utils.stake_info import StakeInfo
+from telliot_feeds.utils.discord import submit_or_not
 
 logger = get_logger(__name__)
 
@@ -74,6 +75,16 @@ class Tellor360Reporter(Stake):
         self.chain_id = chain_id
         self.acct_addr = to_checksum_address(self.account.address)
         logger.info(f"Reporting with account: {self.acct_addr}")
+        
+        self.discord_notification_data = {
+            "account": self.acct_addr,
+            "last_report": None,
+            "reporter_lock_time": None,
+            "transaction_url": None,
+            "tbrtips": 0.0,
+            "usd_profit": 0.0,
+            "percent_profit": 0.0,
+        }
 
     async def get_stake_amount(self) -> Tuple[Optional[int], ResponseStatus]:
         """Reads the current stake amount from the oracle contract
@@ -125,6 +136,7 @@ class Tellor360Reporter(Stake):
         self.stake_info.store_staker_balance(staker_details.stake_balance)
         # update time of last report
         self.stake_info.update_last_report_time(staker_details.last_report)
+        self.discord_notification_data['last_report'] = staker_details.last_report
         # update reports count
         self.stake_info.update_reports_count(staker_details.reports_count)
         # check if staker balance changed which means a value they submitted has been disputed
@@ -181,6 +193,7 @@ class Tellor360Reporter(Stake):
         # 12hrs in seconds is 43200
         try:
             reporter_lock = 43200 / math.floor(staker_balance / current_stake_amount)
+            self.discord_notification_data['reporter_lock_time'] = reporter_lock
         except ZeroDivisionError:  # Tellor Playground contract's stakeAmount is 0
             reporter_lock = 0
         time_remaining = round(self.stake_info.last_report_time + reporter_lock - time.time())
@@ -208,6 +221,7 @@ class Tellor360Reporter(Stake):
             logger.info(f"Time based rewards: {self.to_ether(time_based_rewards):.04f}")
             if time_based_rewards is not None:
                 self.autopaytip += time_based_rewards
+                self.discord_notification_data['tbrtips'] = round(self.to_ether(self.autopaytip), 4)
         return self.autopaytip
 
     async def fetch_datafeed(self) -> Optional[DataFeed[Any]]:
@@ -291,11 +305,13 @@ class Tellor360Reporter(Stake):
         rev_usd = tip * price_fetch_usd
         costs_usd = txn_fee * price_native_token  # convert gwei costs to eth, then to usd
         profit_usd = rev_usd - costs_usd
+        self.discord_notification_data['usd_profit'] = profit_usd
         logger.info(f"Estimated profit: ${round(profit_usd, 2)}")
         logger.info(f"tip price: {round(rev_usd, 2)}, gas costs: {costs_usd}")
         
         # Calculate percentage profit
         percent_profit = ((profit_usd) / costs_usd) * 100
+        self.discord_notification_data['percent_profit'] = percent_profit
         logger.info(f"Estimated percent profit: {round(percent_profit, 2)}%")
         
         # Check expected profit based on type
@@ -425,13 +441,16 @@ class Tellor360Reporter(Stake):
             # Confirm transaction
             tx_receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash, timeout=360)
 
-            tx_url = f"{self.endpoint.explorer}/tx/{tx_hash.hex()}"
+            tx_url = f"{self.endpoint.explorer}#/tx/{tx_hash.hex()}"
 
             if tx_receipt["status"] == 0:
                 msg = f"Transaction reverted. ({tx_url})"
                 return tx_receipt, error_status(msg, log=logger.error)
 
             logger.info(f"View reported data: \n{tx_url}")
+            self.discord_notification_data['transaction_url'] = tx_url
+            response = submit_or_not(self.discord_notification_data)
+            logger.info(response)
             return tx_receipt, ResponseStatus()
         except Exception as e:
             note = "Failed to confirm transaction"
