@@ -40,7 +40,7 @@ mainnet_tokens = {
     "dai": "0xefd766ccb38eaf1dfd701853bfce31359239f305",
     "usdc": "0x15d38573d2feeb82e7ad5187ab8c1d52810b1f07",
     "plsx": "0x95b303987a60c71504d99aa1b13b4da07b0790ab",
-    #"fetc": "0xC0573e2Fc47B26fb05097a553BBfcf0166bada0A", #update when we have the address
+    "fetch": "0xe39B70c9978E4232140d148Ad3C0b08f4A42220D",
     "hex": "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
     "inc": "0x2fa878ab3f87cc1c9737fc071108f904c0b0c95d",
     "loan": "0x9159f1d2a9f51998fc9ab03fbd8f265ab14a1b3b",
@@ -51,7 +51,7 @@ if network_id == "369":  # mainnet
 elif network_id == "943":  # testnet
     pulsex_subgraph_supporten_tokens, url = testnet_tokens, testnet_graph
 else:
-    raise ValueError("Unsupported pulsexSubgraph NETWORK_ID")
+    raise ValueError("Unsupported pulsexSubgraph NETWORK_ID. Check .env")
 
 
 
