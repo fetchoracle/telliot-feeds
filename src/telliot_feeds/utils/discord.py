@@ -50,6 +50,7 @@ def send_discord_msg_telliot(notification_data: Union[dict, str]) -> str:
             f"**Rewards and Tips received:** {notification_data.get('tbrtips', 0.0):.4f} FETCH\n"
             f"**Percent and USD profits:** ~{notification_data.get('percent_profit', 'N/A'):.2f}% and "\
             f"~{notification_data.get('usd_profit', 'N/A'):.2f} USD \n"
+            f"**Query:** {notification_data.get('query', 'N/A')}\n"
         )
     try:
         get_alert_bot_4().post(content=message)
