@@ -444,7 +444,9 @@ class Tellor360Reporter(Stake):
             tx_url = f"{self.endpoint.explorer}#/tx/{tx_hash.hex()}"
 
             if tx_receipt["status"] == 0:
-                msg = f"Transaction reverted. ({tx_url})"
+                msg = f"❗Transaction reverted:\n ({tx_url})"
+                response = submit_or_not(msg)
+                logger.info(response)
                 return tx_receipt, error_status(msg, log=logger.error)
 
             logger.info(f"View reported data: \n{tx_url}")
