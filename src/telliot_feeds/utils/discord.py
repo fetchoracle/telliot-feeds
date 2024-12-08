@@ -10,8 +10,6 @@ load_dotenv()
 import click
 from discordwebhook import Discord
 
-price_data = []
-
 def generic_alert(msg: str) -> None:
     """Send a Discord message via webhook."""
     send_discord_msg_telliot(msg)
@@ -28,15 +26,11 @@ def submit_or_not(notification_data: Union[dict, str]) -> Union[str, dict]:
         notification_data['last_report'] = timestamp_convert(notification_data.get('last_report', 0))
     return send_discord_msg_telliot(notification_data)
 
-def price_submitted(price: int) -> None:
-    price_data.append(price)
-    return
-
-
 def get_alert_bot_4() -> Discord:
     """Read the Discord webhook url from the environment."""
     DISCORD_WEBHOOK_URL_4 = os.getenv("DISCORD_WEBHOOK_URL_4")
     if not DISCORD_WEBHOOK_URL_4:
+        price_data.clear()
         raise Exception("Webhook not set. Won't send nofitication.")
     return Discord(url=DISCORD_WEBHOOK_URL_4)
 
@@ -50,7 +44,7 @@ def send_discord_msg_telliot(notification_data: Union[dict, str]) -> str:
         message =(
             f"ℹ️ {MONITOR_NAME} Notification:\n"
             f"**Query:** {notification_data.get('query', 'N/A')}\n"
-            f"**Price Submitted:** {price_data[0]}\n"            
+            f"**Price Submitted:** {notification_data.get('price_submitted', 0.0):.7f}".rstrip('0').rstrip('.') + "\n"
             f"**Account:** {notification_data.get('account', 'N/A')}\n"
             f"**Last Report at:** {notification_data.get('last_report', 'N/A')}\n"
             f"**Reporter Interval:** ~{timedelta(seconds=int(notification_data.get('reporter_lock_time', 0)))}\n"
@@ -61,7 +55,6 @@ def send_discord_msg_telliot(notification_data: Union[dict, str]) -> str:
         )
     try:
         get_alert_bot_4().post(content=message)
-        price_data.clear()
         return f"Discord notification: Sent to webhook api set in .env"
     except Exception as e:
         return f"Discord Notification: {e}"

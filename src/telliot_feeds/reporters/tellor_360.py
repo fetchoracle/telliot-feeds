@@ -85,6 +85,7 @@ class Tellor360Reporter(Stake):
             "usd_profit": 0.0,
             "percent_profit": 0.0,
             "query": "",
+            "price_submitted": 0.0,
         }
 
     async def get_stake_amount(self) -> Tuple[Optional[int], ResponseStatus]:
@@ -373,6 +374,7 @@ class Tellor360Reporter(Stake):
             logger.debug(f"Current query: {datafeed.query.descriptor}")
             logger.debug(f"Reporter Encoded value: {value.hex()}")
             self.discord_notification_data['query'] = datafeed.query.descriptor
+            self.discord_notification_data['price_submitted'] = self.to_ether(int(value.hex(), 16))
         except Exception as e:
             msg = f"Error encoding response value {latest_data[0]}"
             return None, error_status(msg, e=e, log=logger.error)
