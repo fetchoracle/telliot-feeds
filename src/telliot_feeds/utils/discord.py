@@ -58,3 +58,15 @@ def send_discord_msg_telliot(notification_data: Union[dict, str]) -> str:
     except Exception as e:
         return f"Discord Notification: {e}"
 
+def dispute_notification(msg: str) -> str:
+    '''Send a notification if a dispute (stake lowered) is detected'''
+    MONITOR_NAME = os.getenv("MONITOR_NAME_TELLIOT", "Monitor")
+    message =(
+        f"‼️{MONITOR_NAME} Notification:\n"
+        f"**Check your Reporter:** {msg}'\n"
+    )
+    try:
+        get_alert_bot_4().post(content=message)
+        return f"Discord notification: Sent to webhook api set in .env"
+    except Exception as e:
+        return f"Discord Notification: {e}"
