@@ -123,7 +123,9 @@ class Stake(GasFees):
         logger.warning(f"""
             depositStake resets staker start date to current block timestamp:
             startDate: {startDate}
+            startDate GMT: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(startDate))}
             block_timestamp: {block_timestamp['timestamp']}
+            block_timestamp GMT: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(block_timestamp['timestamp']))}
         """)
 
         deposit_receipt, deposit_status = await self.oracle.write(
