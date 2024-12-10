@@ -59,4 +59,9 @@ async def request_withdraw(
         "gas_multiplier": gas_multiplier,
         "max_priority_fee_range": max_priority_fee_range,
     }
+
+    click.echo("""
+        requestStakingWithdraw resets staker start date to current block timestamp
+    """)
+
     await call_oracle(ctx=ctx, func="requestStakingWithdraw", user_inputs=user_inputs, _amount=int(amount * 1e18))

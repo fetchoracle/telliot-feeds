@@ -109,6 +109,25 @@ class Stake(GasFees):
             return False, error_status("unable to calculate fees for deposit txn", e=status.error, log=logger.error)
 
         fees = self.get_gas_info_core()
+
+        startDate = 0
+        staker_info, status = await self.oracle.read(
+            "getStakerInfo", _stakerAddress=self.web3.toChecksumAddress(self.account.address)
+        )
+        if status.ok:
+            startDate = staker_info[0]
+        else:
+            logger.warning("Could not retrieve staker info startDate")
+
+        block_timestamp = self.web3.eth.getBlock("latest")
+        logger.warning(f"""
+            depositStake resets staker start date to current block timestamp:
+            startDate: {startDate}
+            startDate GMT: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(startDate))}
+            block_timestamp: {block_timestamp['timestamp']}
+            block_timestamp GMT: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(block_timestamp['timestamp']))}
+        """)
+
         deposit_receipt, deposit_status = await self.oracle.write(
             func_name="depositStake",
             _amount=amount,
