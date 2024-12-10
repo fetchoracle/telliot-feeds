@@ -53,7 +53,7 @@ class StakeInfo:
         if len(self.staker_balance_history) == self.max_data:
             if self.staker_balance_history[-1] < self.staker_balance_history[-2]:
                 logger.warning("Your staked balance has decreased, account might be in dispute")
-                msg = (f'There was a decrease in your staked amount since you started reporting.\n You may have been disputed')
+                msg = (f'There was a decrease in your staked balance since you started reporting.\n You may have been disputed')
                 response = dispute_notification(msg)
                 logger.info(response)
                 return True
