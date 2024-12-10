@@ -5,6 +5,7 @@ from typing import Deque
 from typing import Optional
 
 from telliot_feeds.utils.log import get_logger
+from telliot_feeds.utils.discord import dispute_notification
 
 logger = get_logger(__name__)
 
@@ -52,6 +53,9 @@ class StakeInfo:
         if len(self.staker_balance_history) == self.max_data:
             if self.staker_balance_history[-1] < self.staker_balance_history[-2]:
                 logger.warning("Your staked balance has decreased, account might be in dispute")
+                msg = (f'There was a decrease in your staked balance since you started reporting.\n You may have been disputed')
+                response = dispute_notification(msg)
+                logger.info(response)
                 return True
         return False
 
