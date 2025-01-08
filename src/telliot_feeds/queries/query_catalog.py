@@ -37,6 +37,8 @@ query_catalog.add_entry(tag="trb-usd-spot", title="TRB/USD spot price", q=SpotPr
 
 query_catalog.add_entry(tag="fetch-usd-spot", title="FETCH/USD spot price",
                         q=SpotPrice(asset="fetch", currency="usd"))
+query_catalog.add_entry(tag="tfetch-usd-spot", title="tFETCH/USD spot price",
+                        q=SpotPrice(asset="tfetch", currency="usd"))
                         
 query_catalog.add_entry(
     tag="ohm-eth-spot",
@@ -61,6 +63,12 @@ query_catalog.add_entry(
     tag="dai-usd-spot",
     title="DAI/USD spot price",
     q=SpotPrice(asset="dai", currency="usd"),
+)
+
+query_catalog.add_entry(
+    tag="tdai-usd-spot",
+    title="tDAI/USD spot price",
+    q=SpotPrice(asset="tdai", currency="usd"),
 )
 
 query_catalog.add_entry(
@@ -97,6 +105,12 @@ query_catalog.add_entry(
     tag="usdc-usd-spot",
     title="USDC/USD spot price",
     q=SpotPrice(asset="usdc", currency="usd"),
+)
+
+query_catalog.add_entry(
+    tag="tusdc-usd-spot",
+    title="tUSDC/USD spot price",
+    q=SpotPrice(asset="tusdc", currency="usd"),
 )
 
 
@@ -144,6 +158,12 @@ query_catalog.add_entry(
     tag="pls-usd-spot",
     title="PLS/USD spot price",
     q=SpotPrice(asset="pls", currency="usd"),
+)
+
+query_catalog.add_entry(
+    tag="tpls-usd-spot",
+    title="tPLS/USD spot price",
+    q=SpotPrice(asset="tpls", currency="usd"),
 )
 
 query_catalog.add_entry(
@@ -673,9 +693,21 @@ query_catalog.add_entry(
 )
 
 query_catalog.add_entry(
+    tag="thex-usd-spot",
+    title="tHEX/USD spot price",
+    q=SpotPrice(asset="thex", currency="usd"),
+)
+
+query_catalog.add_entry(
     tag="inc-usd-spot",
     title="INC/USD spot price",
     q=SpotPrice(asset="inc", currency="usd"),
+)
+
+query_catalog.add_entry(
+    tag="tinc-usd-spot",
+    title="tINC/USD spot price",
+    q=SpotPrice(asset="tinc", currency="usd"),
 )
 
 query_catalog.add_entry(
@@ -685,9 +717,21 @@ query_catalog.add_entry(
 )
 
 query_catalog.add_entry(
+    tag="tloan-usd-spot",
+    title="tLOAN/USD spot price",
+    q=SpotPrice(asset="tloan", currency="usd"),
+)
+
+query_catalog.add_entry(
     tag="plsx-usd-spot",
     title="PLSX/USD spot price",
     q=SpotPrice(asset="plsx", currency="usd"),
+)
+
+query_catalog.add_entry(
+    tag="tplsx-usd-spot",
+    title="tPLSX/USD spot price",
+    q=SpotPrice(asset="tplsx", currency="usd"),
 )
 
 query_catalog.add_entry(
