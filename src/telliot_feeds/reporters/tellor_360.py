@@ -24,6 +24,7 @@ from telliot_feeds.constants import CHAINS_WITH_TBR
 from telliot_feeds.feeds import DataFeed
 from telliot_feeds.feeds.trb_usd_feed import trb_usd_median_feed
 from telliot_feeds.feeds.fetch_usd_feed import fetch_usd_median_feed
+from telliot_feeds.feeds.tfetch_usd_feed import tfetch_usd_median_feed
 from telliot_feeds.reporters.rewards.time_based_rewards import get_time_based_rewards
 from telliot_feeds.reporters.stake import Stake
 from telliot_feeds.reporters.tips.suggest_datafeed import get_feed_and_tip
@@ -75,6 +76,9 @@ class Tellor360Reporter(Stake):
         self.chain_id = chain_id
         self.acct_addr = to_checksum_address(self.account.address)
         logger.info(f"Reporting with account: {self.acct_addr}")
+        
+        '''May be updated later depending on Telliot use in other chains with other token addresses'''
+        self.fetch_native_token = tfetch_usd_median_feed if self.chain_id == 943 else fetch_usd_median_feed
         
         self.discord_notification_data = {
             "account": self.acct_addr,
@@ -273,10 +277,10 @@ class Tellor360Reporter(Stake):
         tip = self.to_ether(self.autopaytip)
         # Fetch token prices in USD
         native_token_feed = get_native_token_feed(self.chain_id)
-        price_feeds = [native_token_feed, fetch_usd_median_feed]
+        price_feeds = [native_token_feed, self.fetch_native_token]
         _ = await asyncio.gather(*[feed.source.fetch_new_datapoint() for feed in price_feeds])
         price_native_token = native_token_feed.source.latest[0]
-        price_fetch_usd = fetch_usd_median_feed.source.latest[0]
+        price_fetch_usd = self.fetch_native_token.source.latest[0]
 
         if price_native_token is None or price_fetch_usd is None:
             return error_status("Unable to fetch token price", log=logger.warning)
