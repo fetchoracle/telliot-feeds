@@ -452,7 +452,7 @@ class Tellor360Reporter(Stake):
             # Confirm transaction
             tx_receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash, timeout=360)
 
-            tx_url = f"{self.endpoint.explorer}#/tx/{tx_hash.hex()}"
+            tx_url = f"{self.endpoint.explorer}/tx/{tx_hash.hex()}"
 
             if tx_receipt["status"] == 0:
                 msg = f"Transaction reverted:\n ({tx_url})"
