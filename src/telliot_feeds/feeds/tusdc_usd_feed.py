@@ -3,14 +3,14 @@ from telliot_feeds.queries.price.spot_price import SpotPrice
 from telliot_feeds.sources.price.spot.pulsex_subgraph import PulseXSubgraphSource
 from telliot_feeds.sources.price_aggregator import PriceAggregator
 
-plsx_usd_median_feed = DataFeed(
-    query=SpotPrice(asset="PLSX", currency="USD"),
+tusdc_usd_median_feed = DataFeed(
+    query=SpotPrice(asset="TUSDC", currency="USD"),
     source=PriceAggregator(
-        asset="plsx",
+        asset="tusdc",
         currency="usd",
         algorithm="median",
         sources=[
-            PulseXSubgraphSource(asset="plsx", currency="usd"),
+            PulseXSubgraphSource(asset="t*usdc", currency="usd"), #pulsechain testnet USDC
         ],
     ),
 )

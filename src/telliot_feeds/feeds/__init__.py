@@ -22,6 +22,7 @@ from telliot_feeds.feeds.comp_usd_feed import comp_usd_median_feed
 from telliot_feeds.feeds.crv_usd_feed import crv_usd_median_feed
 from telliot_feeds.feeds.custom_price_manual_feed import custom_price_manual_feed
 from telliot_feeds.feeds.dai_usd_feed import dai_usd_median_feed
+from telliot_feeds.feeds.tdai_usd_feed import tdai_usd_median_feed
 from telliot_feeds.feeds.daily_volatility_manual_feed import daily_volatility_manual_feed
 from telliot_feeds.feeds.diva_feed import diva_example_feed
 from telliot_feeds.feeds.diva_feed import diva_manual_feed
@@ -80,6 +81,7 @@ from telliot_feeds.feeds.olympus import ohm_eth_median_feed
 from telliot_feeds.feeds.op_usd_feed import op_usd_median_feed
 from telliot_feeds.feeds.ousd_usd_feed import ousd_usd_median_feed
 from telliot_feeds.feeds.pls_usd_feed import pls_usd_median_feed
+from telliot_feeds.feeds.tpls_usd_feed import tpls_usd_median_feed
 from telliot_feeds.feeds.primeeth_eth_feed import primeeth_eth_median_feed
 from telliot_feeds.feeds.pufeth_usd_feed import pufeth_usd_median_feed
 from telliot_feeds.feeds.pyth_usd_feed import pyth_usd_median_feed
@@ -110,6 +112,7 @@ from telliot_feeds.feeds.twap_manual_feed import twap_30d_example_manual_feed
 from telliot_feeds.feeds.twap_manual_feed import twap_manual_feed
 from telliot_feeds.feeds.uni_usd_feed import uni_usd_median_feed
 from telliot_feeds.feeds.usdc_usd_feed import usdc_usd_median_feed
+from telliot_feeds.feeds.tusdc_usd_feed import tusdc_usd_median_feed
 from telliot_feeds.feeds.usdm_usd_feed import usdm_usd_median_feed
 from telliot_feeds.feeds.usdt_usd_feed import usdt_usd_median_feed
 from telliot_feeds.feeds.usdy_usd_feed import usdy_usd_median_feed
@@ -127,10 +130,15 @@ from telliot_feeds.feeds.wusdm_usd_feed import wusdm_usd_feed
 from telliot_feeds.feeds.xdai_usd_feed import xdai_usd_median_feed
 from telliot_feeds.feeds.yfi_usd_feed import yfi_usd_median_feed
 from telliot_feeds.feeds.fetch_usd_feed import fetch_usd_median_feed
+from telliot_feeds.feeds.tfetch_usd_feed import tfetch_usd_median_feed
+from telliot_feeds.feeds.tplsx_usd_feed import tplsx_usd_median_feed
 from telliot_feeds.feeds.plsx_usd_feed import plsx_usd_median_feed
 from telliot_feeds.feeds.hex_usd_feed import hex_usd_median_feed
+from telliot_feeds.feeds.thex_usd_feed import thex_usd_median_feed
 from telliot_feeds.feeds.inc_usd_feed import inc_usd_median_feed
+from telliot_feeds.feeds.tinc_usd_feed import tinc_usd_median_feed
 from telliot_feeds.feeds.loan_usd_feed import loan_usd_median_feed
+from telliot_feeds.feeds.tloan_usd_feed import tloan_usd_median_feed
 
 
 # Feeds under RANDOM_FEEDS will be reported, randomly, when using -rf option. Comment out or remove the ones you don't want to report to.
@@ -195,12 +203,14 @@ CATALOG_FEEDS: Dict[str, DataFeed[Any]] = {
     "vsq-usd-spot": vsq_usd_median_feed,
     "bct-usd-spot": bct_usd_median_feed,
     "dai-usd-spot": dai_usd_median_feed,
+    "tdai-usd-spot": tdai_usd_median_feed,
     "ric-usd-spot": ric_usd_median_feed,
     "idle-usd-spot": idle_usd_median_feed,
     "mkr-usd-spot": mkr_usd_median_feed,
     "sushi-usd-spot": sushi_usd_median_feed,
     "matic-usd-spot": matic_usd_median_feed,
     "usdc-usd-spot": usdc_usd_median_feed,
+    "tusdc-usd-spot": tusdc_usd_median_feed,
     "gas-price-oracle-example": gas_price_oracle_feed_example,
     "eth-usd-30day_volatility": eth_usd_30day_volatility,
     "eur-usd-spot": eur_usd_median_feed,
@@ -211,6 +221,7 @@ CATALOG_FEEDS: Dict[str, DataFeed[Any]] = {
     "tellor-rng-example": tellor_rng_feed,
     "twap-eth-usd-example": twap_30d_example_manual_feed,
     "pls-usd-spot": pls_usd_median_feed,
+    "tpls-usd-spot": tpls_usd_median_feed,
     "eth-usd-spot": eth_usd_median_feed,
     "btc-usd-spot": btc_usd_median_feed,
     "trb-usd-spot": trb_usd_median_feed,
@@ -294,9 +305,14 @@ CATALOG_FEEDS: Dict[str, DataFeed[Any]] = {
     "stone-usd-spot": stone_usd_median_feed,
     "superoethb-eth-spot": superoethb_eth_median_feed,
     "fetch-usd-spot": fetch_usd_median_feed,
+    "tfetch-usd-spot": tfetch_usd_median_feed,
     "hex-usd-spot": hex_usd_median_feed,
+    "thex-usd-spot": thex_usd_median_feed,
     "inc-usd-spot": inc_usd_median_feed,
+    "tinc-usd-spot": tinc_usd_median_feed,
     "loan-usd-spot": loan_usd_median_feed,
+    "tloan-usd-spot": tloan_usd_median_feed,
+    "tplsx-usd-spot": tplsx_usd_median_feed,
     "plsx-usd-spot": plsx_usd_median_feed,
     "lsk-usd-spot": lsk_usd_median_feed,
 }
