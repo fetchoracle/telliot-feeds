@@ -3,10 +3,13 @@ from telliot_feeds.datafeed import DataFeed
 from telliot_feeds.queries.price.spot_price import SpotPrice
 from telliot_feeds.sources.price.spot.coingecko import CoinGeckoSpotPriceSource
 from telliot_feeds.sources.price.spot.pulsex_subgraph import PulseXSubgraphSource
+#from telliot_feeds.sources.price.spot.pulsex_subgraph_v2 import PulseXSubgraphv2Source
 from telliot_feeds.sources.price.spot.fetch_usd_mock import FetchUsdMockSpotPriceSource
 from telliot_feeds.sources.price_aggregator import PriceAggregator
 from dotenv import load_dotenv
 import os
+
+#PulseX v2 on testnet is buggy. If ever needed, just remove the # to use it as source for tfetch prices.
 
 load_dotenv()
 
@@ -23,6 +26,9 @@ else:
             asset="tfetch",
             currency="usd",
             algorithm="median",
-            sources=[PulseXSubgraphSource(asset="t*fetch", currency="usd")],
-        )
+            sources=[
+            PulseXSubgraphSource(asset="t*fetch", currency="usd"),
+            #PulseXSubgraphv2Source(asset="t*fetch", currency="usd"),
+        ]
     )
+)
