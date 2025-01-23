@@ -6,7 +6,7 @@ This package contains reporting tools and datafeeds for Tellor oracles.
 
 ## [Installation and Configuration](https://docs.fetchoracle.com/reporting-data/installing-telliot)
 
-## [Usage](https://tellor-io.github.io/telliot-feeds/usage/)
+## [Usage](https://docs.fetchoracle.com/reporting-data/reporting-with-telliot)
 
 ## Example
 
