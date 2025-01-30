@@ -95,7 +95,7 @@ class Stake(GasFees):
 
         # if allowance is less than amount_to_stake then approve
         if allowance < amount:
-            approve_receipt, approve_status = await self.approve_spending(amount - allowance)
+            approve_receipt, approve_status = await self.approve_spending(amount)
             if not approve_receipt or not approve_status.ok:
                 return False, approve_status
             # Add this to avoid nonce error from txn happening too fast
