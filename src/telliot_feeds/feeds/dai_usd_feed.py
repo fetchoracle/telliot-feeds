@@ -17,7 +17,7 @@ dai_usd_median_feed = DataFeed(
             CoinGeckoSpotPriceSource(asset="dai", currency="usd"),
             BinanceSpotPriceSource(asset="dai", currency="usdt"),
             GeminiSpotPriceSource(asset="dai", currency="usd"),
-            UniswapV3PriceSource(asset="dai", currency="usd"),
+            #UniswapV3PriceSource(asset="dai", currency="usd"), #needs an API key. If you have it, set it in Telliot folder in HOME and comment this out
         ],
     ),
 )

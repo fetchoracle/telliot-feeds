@@ -17,7 +17,7 @@ pls_usd_median_feed = DataFeed(
         sources=[
             CoinGeckoSpotPriceSource(asset="pls", currency="usd"),
             CoinpaprikaSpotPriceSource(asset="pls-pulsechain", currency="usd"),
-            UniswapV3PriceSource(asset="pls", currency="usd"),
+            #UniswapV3PriceSource(asset="pls", currency="usd"), #needs an API key. If you have it, set it in Telliot folder in HOME and comment this out
             PulseXSubgraphSource(asset="wpls", currency="usd"), 
         ],
     ),
