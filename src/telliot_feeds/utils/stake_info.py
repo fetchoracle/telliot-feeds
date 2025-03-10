@@ -5,7 +5,7 @@ from typing import Deque
 from typing import Optional
 
 from telliot_feeds.utils.log import get_logger
-from telliot_feeds.utils.discord import dispute_notification
+from telliot_feeds.utils.discord import dispute_notification, send_discord_msg_telliot
 
 logger = get_logger(__name__)
 
@@ -22,10 +22,13 @@ class StakeInfo:
 
     stake_amount_history: Deque[int] = field(default_factory=deque, init=False, repr=False)
     staker_balance_history: Deque[int] = field(default_factory=deque, init=False, repr=False)
+    #alert flag for stake amount and min stake amount change
+    stake_amount_gt_staker_balance_alert_sent: bool = field(default=False, init=False, repr=False)
 
     def __post_init__(self) -> None:
         self.stake_amount_history = deque(maxlen=self.max_data)
         self.staker_balance_history = deque(maxlen=self.max_data)
+        self.stake_amount_gt_staker_balance_alert_sent = False
 
     def store_stake_amount(self, stake_amount: int) -> None:
         """Add stake amount to deque and maintain a history of 2"""
@@ -53,7 +56,8 @@ class StakeInfo:
         if len(self.staker_balance_history) == self.max_data:
             if self.staker_balance_history[-1] < self.staker_balance_history[-2]:
                 logger.warning("Your staked balance has decreased, account might be in dispute")
-                msg = (f'There was a decrease in your staked balance since you started reporting.\n You may have been disputed')
+                msg = (f'There was a decrease in your staked balance since you started reporting.\n '
+                       f'You may have been disputed.')
                 response = dispute_notification(msg)
                 logger.info(response)
                 return True
@@ -65,8 +69,10 @@ class StakeInfo:
         if len(self.stake_amount_history) == self.max_data:
             if self.stake_amount_history[-1] < self.stake_amount_history[-2]:
                 logger.info("Oracle stake amount has decreased")
+                send_discord_msg_telliot(f"Oracle stake amount has decreased. Now: {self.stake_amount_history[-1] / 1e18}")
             if self.stake_amount_history[-1] > self.stake_amount_history[-2]:
                 logger.info("Oracle stake amount has increased")
+                send_discord_msg_telliot(f"Oracle stake amount has increased. Now: {self.stake_amount_history[-1] / 1e18}")
             return True
         return False
 
@@ -78,8 +84,17 @@ class StakeInfo:
             return False
         if self.stake_amount_history[-1] > self.staker_balance_history[-1]:
             logger.info("Staker balance is less than oracle stake amount")
+            if not self.stake_amount_gt_staker_balance_alert_sent:  # Check if alert has already been sent
+                if self.staker_balance_history[-1]:
+                    send_discord_msg_telliot(f"Staker balance is less than oracle stake amount.\n"
+                                             f"Balance: {self.staker_balance_history[-1] / 1e18}\n"
+                                             f"Min stake amount: {self.stake_amount_history[-1] / 1e18}")
+                self.stake_amount_gt_staker_balance_alert_sent = True  # Set flag to True after sending the alert
             return True
-        return False
+        else:
+            # Reset the alert flag if the condition is no longer met
+            self.stake_amount_gt_staker_balance_alert_sent = False
+            return False
 
     @property
     def current_stake_amount(self) -> int:
