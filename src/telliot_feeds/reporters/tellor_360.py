@@ -1,5 +1,6 @@
 import asyncio
 import math
+import os
 import time
 from datetime import timedelta, datetime
 from typing import Any
@@ -38,7 +39,7 @@ from telliot_feeds.utils.reporter_utils import is_online
 from telliot_feeds.utils.reporter_utils import suggest_random_feed
 from telliot_feeds.utils.reporter_utils import tkn_symbol
 from telliot_feeds.utils.stake_info import StakeInfo
-from telliot_feeds.utils.discord import submit_or_not
+from telliot_feeds.utils.discord import submit_or_not, send_discord_msg_telliot
 
 logger = get_logger(__name__)
 
@@ -82,6 +83,7 @@ class Tellor360Reporter(Stake):
         
         self.discord_notification_data = {
             "account": self.acct_addr,
+            "chain": self.chain_id,
             "last_report": 0,
             "reporter_lock_time": 0,
             "transaction_url": "",
@@ -181,6 +183,10 @@ class Tellor360Reporter(Stake):
 
             # add staked balance after successful stake deposit
             self.stake_info.update_staker_balance(amount_to_stake)
+            send_discord_msg_telliot(f'Reporter {self.acct_addr} has staked using Telliot:\n'
+                                     f'Amount: {amount_to_stake}.\n'
+                                     f'Stake goal set in Telliot (-s):{self.stake}'
+                                     f'Balance now: {self.stake_info.current_staker_balance}')
 
         return True, ResponseStatus()
 
@@ -443,7 +449,7 @@ class Tellor360Reporter(Stake):
             tx_hash = self.web3.eth.send_raw_transaction(tx_signed.rawTransaction)
         except Exception as e:
             note = "Send transaction failed"
-            msg = f"Transaction failed:\n     {e}"
+            msg = f"Submit transaction failed:\n     {e}"
             response = submit_or_not(msg)
             logger.info(response)
             return None, error_status(note, log=logger.error, e=e)
@@ -533,7 +539,7 @@ class Tellor360Reporter(Stake):
 
         logger.debug("Sending submitValue transaction")
         tx_receipt, status = self.sign_n_send_transaction(build_tx)
-        # reset datafeed for a new suggestion if qtag wasn't selected in cli
+        # reset datafeed for a new suggestion if a tag wasn't selected in cli
         if self.qtag_selected is False:
             self.datafeed = None
 
