@@ -41,16 +41,19 @@ def send_discord_msg_telliot(notification_data: Union[dict, str]) -> str:
         message = f"❗ {MONITOR_NAME} Notification:\n\n {notification_data}"
     else:
         message =(
-            f"ℹ️ {MONITOR_NAME} Notification:\n"
+            f"ℹ️ {MONITOR_NAME} Notification ℹ️\n"
+            f"- Report submitted:\n"
             f"**Query:** {notification_data.get('query', 'N/A')}\n"
             f"**Price Submitted:** {notification_data.get('price_submitted', 0.0):.7f}".rstrip('0').rstrip('.') + "\n"
             f"**Account:** {notification_data.get('account', 'N/A')}\n"
-            f"**Last Report at:** {notification_data.get('last_report', 'N/A')}\n"
+            f"**Your previous report was:** {notification_data.get('last_report', 'N/A')}\n"
             f"**Reporter Interval:** ~{timedelta(seconds=int(notification_data.get('reporter_lock_time', 0)))}\n"
             f"**Transaction URL:** {notification_data.get('transaction_url', 'N/A')}\n"
-            f"**Rewards + Tips received:** ~{notification_data.get('tbrtips', 0.0):.4f} FETCH\n"
-            f"**Percent and USD profits:** ~{notification_data.get('percent_profit', 'N/A'):.2f} %  |  "\
+            f"\n**_Possible_ Rewards Received:**\n"
+            f"Time based rewards + Tips: ~{notification_data.get('tbrtips', 0.0):.4f} FETCH\n"
+            f"Approx. % and USD profits: ~{notification_data.get('percent_profit', 'N/A'):.2f} %  |  "\
             f"~{notification_data.get('usd_profit', 'N/A'):.2f} USD \n"
+            f"\nCheck latest reports here: {get_dashboard_url(str(notification_data.get('chain')), 'reporter_logs')}"
         )
     try:
         get_alert_bot_4().post(content=message)
@@ -62,7 +65,7 @@ def dispute_notification(msg: str) -> str:
     '''Send a notification if a dispute (stake lowered) is detected'''
     MONITOR_NAME = os.getenv("MONITOR_NAME_TELLIOT", "Monitor")
     message =(
-        f"‼️{MONITOR_NAME} Notification:\n"
+        f"‼️{MONITOR_NAME} Notification ‼️\n"
         f"**Check your Reporter:** {msg}'\n"
     )
     try:
@@ -70,3 +73,24 @@ def dispute_notification(msg: str) -> str:
         return f"Discord notification: Sent to webhook api set in .env"
     except Exception as e:
         return f"Discord Notification: {e}"
+
+def get_dashboard_url(chain: str, title: str):
+    """Fetch Dashboard URLs for notifications on telliot"""
+
+    base_urls_telliot = {
+        '943': f'https://testnet.fetchoracle.com/',
+        '369': f'https://go.fetchoracle.com/'
+    }
+
+    chain_url = base_urls_telliot.get(chain)
+
+    if not chain_url:
+        return f'No Dashboard for {chain} chain. Check tx link.'
+
+    fetch_dashboard_telliot = {
+        'home': f'{chain_url}',
+        'vote': f'{chain_url}#/vote-on-dispute',
+        'reporter_logs': f'{chain_url}#/reporter-logs',
+        'submit_dispute': f'{chain_url}#/submit-dispute'
+    }
+    return fetch_dashboard_telliot.get(title)
