@@ -1,4 +1,5 @@
 import os
+import logging
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
@@ -14,9 +15,10 @@ from telliot_feeds.pricing.price_source import PriceSource
 from telliot_feeds.utils.log import get_logger
 
 logger = get_logger(__name__)
+logger.setLevel(logging.INFO)
 
 dexscreener_supported_pools = {
-#pulsechain exchanges
+#pulsechain exchanges:
 "9inch":{
     "fetch/usdl": "0xf3dA9A1FF38c6D774e6aA583302A5aB7646b7025",
 },
@@ -26,7 +28,7 @@ dexscreener_supported_pools = {
 "pulsex":{
     "fetch/wpls": "0xDFB503E2da6D58eFFfB1710AaDf7A97f21EA76ad",
 },
-#base exchanges
+#BASE exchanges:
 "aerodrome":{
     "aero/usdc": "0x6cDcb1C4A4D1C3C6d054b27AC5B77e89eAFb971d",
 },
@@ -57,7 +59,7 @@ class DexScreenerService(WebPriceService):
         """Implement PriceServiceInterface
         This implementation gets the price from the DexScreener API
         """
-        logger.info(f'Using {MAINNET_API_URL} to fetch values from DexScreener')
+        logger.debug(f'Using {MAINNET_API_URL} to fetch {asset}/{currency}')
         logger.debug(f'asset received:{asset}')
 
         #splitting 'asset' values to get chain, exchange and asset
@@ -90,7 +92,7 @@ class DexScreenerService(WebPriceService):
         else:
             logger.error(f"Exchange {exchange} not supported")
             return None, None
-        logger.info(f'asset and currency: {asset}/{currency} in {exchange}')
+        logger.info(f'Fetching {asset}/{currency} in {exchange} for pool {pair_id}')
 
         request_url = MAINNET_API_URL + f"/latest/dex/pairs/{chain_id}/{pair_id}"
 
