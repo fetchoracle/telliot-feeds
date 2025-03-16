@@ -44,15 +44,15 @@ def send_discord_msg_telliot(notification_data: Union[dict, str]) -> str:
             f"ℹ️ {MONITOR_NAME} Notification ℹ️\n"
             f"- Report submitted:\n"
             f"**Query:** {notification_data.get('query', 'N/A')}\n"
-            f"**Price Submitted:** {notification_data.get('price_submitted', 0.0):.7f}".rstrip('0').rstrip('.') + "\n"
+            f"**Price Submitted:** {notification_data.get('price_submitted', 0.0):,.8f}".rstrip('0').rstrip('.') + "\n"
             f"**Account:** {notification_data.get('account', 'N/A')}\n"
             f"**Your previous report was:** {notification_data.get('last_report', 'N/A')}\n"
             f"**Reporter Interval:** ~{timedelta(seconds=int(notification_data.get('reporter_lock_time', 0)))}\n"
             f"**Transaction URL:** {notification_data.get('transaction_url', 'N/A')}\n"
             f"\n**_Possible_ Rewards Received:**\n"
-            f"Time based rewards + Tips: ~{notification_data.get('tbrtips', 0.0):.4f} FETCH\n"
-            f"Approx. % and USD profits: ~{notification_data.get('percent_profit', 'N/A'):.2f} %  |  "\
-            f"~{notification_data.get('usd_profit', 'N/A'):.2f} USD \n"
+            f"Time based rewards + Tips: ~{notification_data.get('tbrtips', 0.0):,.4f} FETCH\n"
+            f"Approx. % and USD profits: ~{notification_data.get('percent_profit', 'N/A'):,.2f} %  |  "\
+            f"~{notification_data.get('usd_profit', 'N/A'):,.2f} USD \n"
             f"\nCheck latest reports here: {get_dashboard_url(str(notification_data.get('chain')), 'reporter_logs')}"
         )
     try:
