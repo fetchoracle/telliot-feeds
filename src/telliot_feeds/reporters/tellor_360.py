@@ -12,7 +12,7 @@ from typing import Tuple
 
 
 from eth_abi.exceptions import EncodingTypeError
-from eth_utils import to_checksum_address
+from eth_utils import to_checksum_address, from_wei
 from telliot_core.contract.contract import Contract
 from telliot_core.utils.key_helpers import lazy_unlock_account
 from telliot_core.utils.response import error_status
@@ -39,7 +39,7 @@ from telliot_feeds.utils.reporter_utils import is_online
 from telliot_feeds.utils.reporter_utils import suggest_random_feed
 from telliot_feeds.utils.reporter_utils import tkn_symbol
 from telliot_feeds.utils.stake_info import StakeInfo
-from telliot_feeds.utils.discord import submit_or_not, send_discord_msg_telliot
+from telliot_feeds.utils.discord import submit_or_not, send_discord_msg_telliot, dispute_notification, get_dashboard_url
 
 logger = get_logger(__name__)
 
@@ -80,7 +80,7 @@ class Tellor360Reporter(Stake):
         
         '''May be updated later depending on Telliot use in other chains with other token addresses'''
         self.fetch_native_token = tfetch_usd_median_feed if self.chain_id == 943 else fetch_usd_median_feed
-        
+
         self.discord_notification_data = {
             "account": self.acct_addr,
             "chain": self.chain_id,
@@ -150,6 +150,15 @@ class Tellor360Reporter(Stake):
         # check if staker balance changed which means a value they submitted has been disputed
         # (logs when it does)
         self.stake_info.is_in_dispute()
+        if self.stake_info.is_in_dispute():
+            msg = (f'{self.acct_addr}\n'
+                   f'There was a decrease in your staked balance since you started reporting.\n '
+                   f'If you didn\'t un-stake while running Telliot(which is NOT recommended),\n'
+                   f'there\'s a chance you may have been disputed.\n'
+                   f'Previous balance: {from_wei(self.stake_info.staker_balance_history[-2], "ether"):,.2f}\n'
+                   f'Current balance: {from_wei(self.stake_info.staker_balance_history[-1], "ether"):,.2f}\n'
+                   f'\nCheck your latest reports here: {get_dashboard_url(str(self.chain_id),"reporter_logs")}')
+            dispute_notification(msg)
 
         logger.info(
             f"""
@@ -183,10 +192,10 @@ class Tellor360Reporter(Stake):
 
             # add staked balance after successful stake deposit
             self.stake_info.update_staker_balance(amount_to_stake)
-            send_discord_msg_telliot(f'Reporter {self.acct_addr} has staked using Telliot:\n'
-                                     f'Amount: {amount_to_stake}.\n'
-                                     f'Stake goal set in Telliot (-s):{self.stake}'
-                                     f'Balance now: {self.stake_info.current_staker_balance}')
+            send_discord_msg_telliot(f'Account {self.acct_addr} has staked using Telliot:\n'
+                                     f'Amount: {amount_to_stake / 10**18:,.2f}.\n'
+                                     f'Stake goal set: {self.stake / 10**18:,.2f}\n'
+                                     f'Balance now: {self.stake_info.current_staker_balance / 10**18:,.2f}')
 
         return True, ResponseStatus()
 
