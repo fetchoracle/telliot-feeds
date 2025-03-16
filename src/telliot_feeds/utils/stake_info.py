@@ -57,9 +57,10 @@ class StakeInfo:
             if self.staker_balance_history[-1] < self.staker_balance_history[-2]:
                 logger.warning("Your staked balance has decreased, account might be in dispute")
                 msg = (f'There was a decrease in your staked balance since you started reporting.\n '
-                       f'You may have been disputed.')
-                response = dispute_notification(msg)
-                logger.info(response)
+                       f'If you didn\'t un-stake while running Telliot, you may have been disputed.\n'
+                       f'Current balance: {self.staker_balance_history[-1]}'
+                       f'Previous balance: {self.staker_balance_history[-2]}')
+                logger.info(msg)
                 return True
         return False
 
@@ -69,10 +70,10 @@ class StakeInfo:
         if len(self.stake_amount_history) == self.max_data:
             if self.stake_amount_history[-1] < self.stake_amount_history[-2]:
                 logger.info("Oracle stake amount has decreased")
-                send_discord_msg_telliot(f"Oracle stake amount has decreased. Now: {self.stake_amount_history[-1] / 1e18}")
+                send_discord_msg_telliot(f"Oracle minimum stake amount has been decreased to: {self.stake_amount_history[-1] / 1e18:,.2f}")
             if self.stake_amount_history[-1] > self.stake_amount_history[-2]:
                 logger.info("Oracle stake amount has increased")
-                send_discord_msg_telliot(f"Oracle stake amount has increased. Now: {self.stake_amount_history[-1] / 1e18}")
+                send_discord_msg_telliot(f"Oracle minimum stake amount has been increased to: {self.stake_amount_history[-1] / 1e18:,.2f}")
             return True
         return False
 
@@ -86,9 +87,9 @@ class StakeInfo:
             logger.info("Staker balance is less than oracle stake amount")
             if not self.stake_amount_gt_staker_balance_alert_sent:  # Check if alert has already been sent
                 if self.staker_balance_history[-1]:
-                    send_discord_msg_telliot(f"Staker balance is less than oracle stake amount.\n"
-                                             f"Balance: {self.staker_balance_history[-1] / 1e18}\n"
-                                             f"Min stake amount: {self.stake_amount_history[-1] / 1e18}")
+                    send_discord_msg_telliot(f"Account balance is less than oracle stake amount.\n"
+                                             f"Balance: {self.staker_balance_history[-1] / 1e18:,.2f}\n"
+                                             f"Min stake amount: {self.stake_amount_history[-1] / 1e18:,.2f}")
                 self.stake_amount_gt_staker_balance_alert_sent = True  # Set flag to True after sending the alert
             return True
         else:
