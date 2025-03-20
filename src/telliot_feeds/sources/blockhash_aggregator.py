@@ -36,7 +36,8 @@ adapter = HTTPAdapter(max_retries=retry_strategy)
 def get_mainnet_web3() -> Any:
     """Get mainnet TelliotConfig."""
     cfg = TelliotConfig()
-    cfg.main.chain_id = 1
+    cfg.main.chain_id = 369
+    logger.info(f'Trying to fetch block from chain: {cfg.main.chain_id}')
     try:
         cfg.get_endpoint().connect()
         return cfg.get_endpoint().web3
@@ -49,45 +50,46 @@ def block_num_from_timestamp(timestamp: int) -> Optional[int]:
         s.mount("https://", adapter)
         try:
             rsp = s.get(
-                "https://api.etherscan.io/api"
+                "https://api.scan.pulsechain.com/api"
                 "?module=block"
                 "&action=getblocknobytime"
                 f"&timestamp={timestamp}"
                 "&closest=before"
-                "&apikey="
             )
         except requests.exceptions.ConnectTimeout:
-            logger.error("Connection timeout getting ETH block num from timestamp")
+            logger.error(f"Connection timeout getting block num from timestamp")
             return None
         except requests.exceptions.RequestException as e:
-            logger.error(f"Etherscan API error: {e}")
+            logger.error(f"API error: {e}")
             return None
 
         try:
             this_block = rsp.json()
+            logger.info(f'Block api data: {this_block["result"]}')
         except JSONDecodeError:
-            logger.error("Etherscan API returned invalid JSON")
+            logger.error("API returned invalid JSON")
             return None
 
         try:
             if this_block["status"] != "1":
-                logger.error(f"Etherscan API returned error: {this_block['message']}")
+                logger.error(f"API returned error: {this_block['message']}")
                 return None
         except KeyError:
-            logger.error("Etherscan API returned JSON without status")
+            logger.error("API returned JSON without status")
             return None
 
         try:
-            result = int(this_block["result"])
+            result = int(this_block["result"]["blockNumber"])
+            logger.info(f"Block received: {this_block['result']['blockNumber']}")
         except ValueError:
-            logger.error("Etherscan API returned invalid block number")
+            logger.error("API returned invalid block number")
             return None
 
         return result
 
 
 async def get_eth_hash(timestamp: int) -> Optional[str]:
-    """Fetches next Ethereum blockhash after timestamp from API."""
+    """Fetches next mainnet blockhash after timestamp from API."""
     w3 = get_mainnet_web3()
     if w3 is None:
         logger.warning("Web3 not connected")
@@ -105,7 +107,7 @@ async def get_eth_hash(timestamp: int) -> Optional[str]:
 
     block_num = block_num_from_timestamp(timestamp)
     if block_num is None:
-        logger.warning("Unable to retrieve block number from Etherscan API")
+        logger.warning("Unable to retrieve block number from API")
         return None
 
     try:
@@ -114,7 +116,7 @@ async def get_eth_hash(timestamp: int) -> Optional[str]:
         logger.error(f"Unable to retrieve block {block_num}: {e}")
         return None
 
-    logger.info(f"Using ETH block number {block_num}")
+    logger.info(f"Using block number {block_num}")
     return str(block["hash"].hex())
 
 
