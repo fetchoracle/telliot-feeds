@@ -8,6 +8,7 @@ from telliot_core.utils.response import error_status
 from telliot_core.utils.response import ResponseStatus
 
 from telliot_feeds.reporters.gas import GasFees
+from telliot_feeds.utils.discord import send_discord_msg_telliot
 from telliot_feeds.utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -82,10 +83,12 @@ class Stake(GasFees):
 
         if amount > wallet_balance:
             msg = (
-                f"Amount to stake: {self.to_ether(amount):.04f} "
-                f"is greater than your balance: {self.to_ether(wallet_balance):.04f} so "
-                "not enough TRB(FETCH in Pulsechain) to cover the stake"
+                f"Account: {self.acct_address}\n"
+                f"Amount to stake: {self.to_ether(amount):,.04f}\n"
+                f"is greater than your balance: {self.to_ether(wallet_balance):,.04f}\n"
+                "Not enough Oracle tokens(FETCH in Pulsechain) to cover the stake."
             )
+            send_discord_msg_telliot(msg)
             return False, error_status(msg, log=logger.warning)
 
         # check allowance to avoid unnecessary approval transactions

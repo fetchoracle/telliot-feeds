@@ -6,7 +6,6 @@ from telliot_feeds.sources.price.spot.coinpaprika import CoinpaprikaSpotPriceSou
 from telliot_feeds.sources.price.spot.uniswapV3 import UniswapV3PriceSource
 from telliot_feeds.sources.price.spot.pulsex_subgraph import PulseXSubgraphSource
 from telliot_feeds.sources.price_aggregator import PriceAggregator
-import os
 
 pls_usd_median_feed = DataFeed(
     query=SpotPrice(asset="PLS", currency="USD"),
@@ -17,8 +16,8 @@ pls_usd_median_feed = DataFeed(
         sources=[
             CoinGeckoSpotPriceSource(asset="pls", currency="usd"),
             CoinpaprikaSpotPriceSource(asset="pls-pulsechain", currency="usd"),
-            UniswapV3PriceSource(asset="pls", currency="usd"),
-            PulseXSubgraphSource(asset="wpls", currency="usd"), 
+            #UniswapV3PriceSource(asset="pls", currency="usd"), #needs an API key. If you have it, set it in Telliot folder in HOME and comment this out
+            PulseXSubgraphSource(asset="wpls", currency="usd"),
         ],
     ),
 )
