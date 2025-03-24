@@ -27,6 +27,9 @@ dexscreener_supported_pools = {
 },
 "pulsex":{
     "fetch/wpls": "0xDFB503E2da6D58eFFfB1710AaDf7A97f21EA76ad",
+    "wpls/dai": "0xE56043671df55dE5CDf8459710433C10324DE0aE",
+    "wpls/usdc": "0x6753560538ECa67617A9Ce605178F788bE7E524E",
+    "wpls/usdt": "0x322Df7921F28F1146Cdf62aFdaC0D6bC0Ab80711",
 },
 #BASE exchanges:
 "aerodrome":{
