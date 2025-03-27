@@ -115,7 +115,7 @@ class PulseXSubgraphService(WebPriceService):
 
                 if token_data is None:
                     logger.error(f"No data found for the token {token}")
-                    logger.info(f"It is possible that no Liquidity Pool exists including this token ({token})")
+                    logger.error(f"It is possible that no Liquidity Pool exists including this token ({token})")
                     return None, None
 
                 price = float(token_data["derivedUSD"])
