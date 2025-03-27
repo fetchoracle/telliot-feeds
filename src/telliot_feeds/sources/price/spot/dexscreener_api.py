@@ -1,10 +1,7 @@
-import os
 import logging
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
-
-from decimal import Decimal
 
 import requests
 
@@ -30,6 +27,7 @@ dexscreener_supported_pools = {
     "wpls/dai": "0xE56043671df55dE5CDf8459710433C10324DE0aE",
     "wpls/usdc": "0x6753560538ECa67617A9Ce605178F788bE7E524E",
     "wpls/usdt": "0x322Df7921F28F1146Cdf62aFdaC0D6bC0Ab80711",
+    "plsx/wpls": "0x1b45b9148791d3a104184Cd5DFE5CE57193a3ee9",
 },
 #BASE exchanges:
 "aerodrome":{
@@ -95,7 +93,7 @@ class DexScreenerService(WebPriceService):
         else:
             logger.error(f"Exchange {exchange} not supported")
             return None, None
-        logger.info(f'Fetching {asset}/{currency} in {exchange} for pool {pair_id}')
+        logger.debug(f'Fetching {asset}/{currency} in {exchange} for pool {pair_id}')
 
         request_url = MAINNET_API_URL + f"/latest/dex/pairs/{chain_id}/{pair_id}"
 
@@ -141,6 +139,7 @@ class DexScreenerService(WebPriceService):
             logger.error(f"Invalid 'priceUsd' format: {pair_data['priceUsd']}.")
             return None, None
 
+        logger.info(f"Price of {asset}/{currency}: {price_usd}")
         return price_usd, datetime_now_utc()
 
 
