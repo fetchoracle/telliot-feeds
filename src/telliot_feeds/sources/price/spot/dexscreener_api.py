@@ -29,6 +29,11 @@ dexscreener_supported_pools = {
     "wpls/usdc": "0x6753560538ECa67617A9Ce605178F788bE7E524E",
     "wpls/usdt": "0x322Df7921F28F1146Cdf62aFdaC0D6bC0Ab80711",
     "plsx/wpls": "0x1b45b9148791d3a104184Cd5DFE5CE57193a3ee9",
+    "hex/wpls": "0xf1F4ee610b2bAbB05C635F726eF8B0C568c8dc65",
+},
+"pulsexv2":{
+    "hex/wpls": "0x19BB45a7270177e303DEe6eAA6F5Ad700812bA98",
+    "hex/usdc": "0xC475332e92561CD58f278E4e2eD76c17D5b50f05",
 },
 #BASE exchanges:
 "aerodrome":{
