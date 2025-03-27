@@ -21,6 +21,7 @@ dexscreener_supported_pools = {
 },
 "9mm":{
     "fetch/wpls": "0x547998b2119dB28a62Ff91FDD64032f6176e9060",
+    "plsx/wpls": "0x96737676cb25396a9F857272cdDc8E3A346d63da",
 },
 "pulsex":{
     "fetch/wpls": "0xDFB503E2da6D58eFFfB1710AaDf7A97f21EA76ad",
@@ -139,7 +140,7 @@ class DexScreenerService(WebPriceService):
             logger.error(f"Invalid 'priceUsd' format: {pair_data['priceUsd']}.")
             return None, None
 
-        logger.info(f"Price of {asset}/{currency}: {price_usd}")
+        logger.info(f"Price of {asset}/{currency} in {exchange}: {price_usd}")
         return price_usd, datetime_now_utc()
 
 
