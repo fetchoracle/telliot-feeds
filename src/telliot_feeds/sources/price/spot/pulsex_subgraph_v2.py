@@ -1,13 +1,9 @@
-import os
-#from dotenv import load_dotenv
-
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
 
-from decimal import Decimal
-
 import requests
+import logging
 
 from telliot_feeds.dtypes.datapoint import datetime_now_utc
 from telliot_feeds.dtypes.datapoint import OptionalDataPoint
@@ -16,6 +12,7 @@ from telliot_feeds.pricing.price_source import PriceSource
 from telliot_feeds.utils.log import get_logger
 
 logger = get_logger(__name__)
+logger.setLevel(logging.INFO)
 
 pulsex_subgraph_supporten_tokens = {
 #mainnet tokens
@@ -24,7 +21,7 @@ pulsex_subgraph_supporten_tokens = {
     #"usdc": "0x15d38573d2feeb82e7ad5187ab8c1d52810b1f07",
     #"plsx": "0x95b303987a60c71504d99aa1b13b4da07b0790ab",
     "fetch": "0xe39B70c9978E4232140d148Ad3C0b08f4A42220D",
-    #"hex": "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
+    "hex": "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
     #"inc": "0x2fa878ab3f87cc1c9737fc071108f904c0b0c95d",
     "loan": "0x9159f1d2a9f51998fc9ab03fbd8f265ab14a1b3b",
 #Testnet Tokens
@@ -58,7 +55,7 @@ class PulseXSubgraphv2Service(WebPriceService):
 
         """
         self.url = TESTNET_GRAPH if asset.startswith('t*') else MAINNET_GRAPH
-        logger.info(f'Using {self.url} to fetch values')
+        logger.debug(f'Using {self.url} to fetch values')
         
         asset = asset.lower()
         currency = currency.lower()
@@ -110,10 +107,11 @@ class PulseXSubgraphv2Service(WebPriceService):
             try:
                 if response["data"]["token"] == None:
                     logger.error(f"No data found for the token {token}")
-                    logger.info(f"It is possible that no Liquidity Pool exists including this token ({token})")
+                    logger.error(f"It is possible that no Liquidity Pool exists including this token ({token})")
                     return None, None
 
                 price = float(response["data"]["token"]["derivedUSD"])
+                logger.info(f"Price for {asset}/{currency}: {price}")
                 return price, datetime_now_utc()
             except KeyError as e:
                 msg = f"Error parsing Pulsechain Subgraph response: KeyError: {e}"
