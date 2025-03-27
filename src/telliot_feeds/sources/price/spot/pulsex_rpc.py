@@ -85,6 +85,7 @@ supported_pools = {
     "wpls/usdc": "0x6753560538ECa67617A9Ce605178F788bE7E524E",
     "wpls/usdt": "0x322Df7921F28F1146Cdf62aFdaC0D6bC0Ab80711",
     "plsx/dai": "0xB2893ceA8080bF43b7b60B589EDaAb5211D98F23",
+    "hex/usdc": "0xC475332e92561CD58f278E4e2eD76c17D5b50f05",
 }
 
 class PairPriceService(WebPriceService):
