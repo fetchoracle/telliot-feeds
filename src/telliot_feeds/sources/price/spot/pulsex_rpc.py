@@ -84,6 +84,7 @@ supported_pools = {
     "wpls/dai": "0xE56043671df55dE5CDf8459710433C10324DE0aE",
     "wpls/usdc": "0x6753560538ECa67617A9Ce605178F788bE7E524E",
     "wpls/usdt": "0x322Df7921F28F1146Cdf62aFdaC0D6bC0Ab80711",
+    "plsx/dai": "0xB2893ceA8080bF43b7b60B589EDaAb5211D98F23",
 }
 
 class PairPriceService(WebPriceService):
@@ -155,7 +156,7 @@ class PairPriceService(WebPriceService):
                 logger.error(f"Asset {asset} not found in the pool {self.pair_address}")
                 return None, None
 
-            logger.debug(f"Price of {asset} in {currency}: {price}")
+            logger.info(f"Price of {asset} in {currency}: {price}")
             timestamp = datetime.fromtimestamp(timestamp)
             return float(price), timestamp
             #return None, None
