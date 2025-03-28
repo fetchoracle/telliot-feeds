@@ -68,6 +68,7 @@ class GeminiSpotPriceService(WebPriceService):
                 return None, None
 
             if r.last is not None:
+                logger.info(f"Price for {asset}/{currency}: {float(r.last)}")
                 return float(r.last), datetime_now_utc()
             else:
                 logger.error(r)

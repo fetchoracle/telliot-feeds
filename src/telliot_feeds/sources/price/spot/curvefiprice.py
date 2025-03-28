@@ -77,6 +77,7 @@ class CurveFiUSDPriceService(WebPriceService):
         if not isAddress:
             logger.error("Asset '0x' address in API response doesn't match contract address stored")
             return None, None
+        logger.info(f"Price for {asset}/{currency}: {asset_price}")
         return asset_price, datetime_now_utc()
 
 

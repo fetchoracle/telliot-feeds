@@ -54,6 +54,7 @@ class CoinpaprikaSpotPriceService(WebPriceService):
             if price is None:
                 logger.error("Error parsing Coinpaprika API response")
                 return None, None
+            logger.info(f"Price for {asset}/{currency}: {price}")
             return price, datetime_now_utc()
 
         else:

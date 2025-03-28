@@ -85,6 +85,7 @@ class KrakenSpotPriceService(WebPriceService):
         else:
             raise Exception("Invalid response from get_url")
 
+        logger.info(f"Price for {asset}/{currency}: {price}")
         return price, datetime_now_utc()
 
 

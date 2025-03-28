@@ -52,6 +52,7 @@ class BinanceSpotPriceService(WebPriceService):
 
             try:
                 price = float(response[0][4])
+                logger.info(f"Price for {asset}/{currency}: {float(response[0][4])}")
                 return price, datetime_now_utc()
             except Exception as e:
                 msg = f"Error parsing Binance API response. Error: {e}"
