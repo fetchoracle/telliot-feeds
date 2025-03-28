@@ -16,13 +16,13 @@ logger.setLevel(logging.INFO)
 
 pulsex_subgraph_supporten_tokens = {
 #mainnet tokens
-    #"wpls": "0xa1077a294dde1b09bb078844df40758a5d0f9a27",
+    "wpls": "0xa1077a294dde1b09bb078844df40758a5d0f9a27",
     #"dai": "0xefd766ccb38eaf1dfd701853bfce31359239f305",
     #"usdc": "0x15d38573d2feeb82e7ad5187ab8c1d52810b1f07",
     #"plsx": "0x95b303987a60c71504d99aa1b13b4da07b0790ab",
     "fetch": "0xe39B70c9978E4232140d148Ad3C0b08f4A42220D",
     "hex": "0x2b591e99afE9f32eAA6214f7B7629768c40Eeb39",
-    #"inc": "0x2fa878ab3f87cc1c9737fc071108f904c0b0c95d",
+    "inc": "0x2fa878ab3f87cc1c9737fc071108f904c0b0c95d",
     "loan": "0x9159f1d2a9f51998fc9ab03fbd8f265ab14a1b3b",
 #Testnet Tokens
     #"t*dai": "0x826e4e896cc2f5b371cd7bb0bd929db3e3db67c0",
