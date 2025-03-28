@@ -89,6 +89,7 @@ class PriceAggregator(DataSource[float]):
 
         # Run the algorithm on all valid prices
         logger.info(f"Running {self.algorithm} on {prices}")
+        logger.info(f"Sorted Prices: {(sorted(prices))}")
         result = self._algorithm(prices)
         datapoint = (result, datetime_now_utc())
         self.store_datapoint(datapoint)
