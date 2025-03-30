@@ -542,7 +542,7 @@ class Tellor360Reporter(Stake):
 
         # Check if profitable if not YOLO
         status = await self.ensure_profitable()
-        logger.debug(f"Ensure profitibility method status: {status}")
+        logger.debug(f"Ensure profitability method status: {status}")
         if not status.ok:
             return None, status
 
