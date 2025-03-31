@@ -30,7 +30,7 @@ def get_alert_bot_4() -> Discord:
     """Read the Discord webhook url from the environment."""
     DISCORD_WEBHOOK_URL_4 = os.getenv("DISCORD_WEBHOOK_URL_4")
     if not DISCORD_WEBHOOK_URL_4:
-        raise Exception("Webhook not set. Won't send nofitication.")
+        raise Exception("Webhook not set. Won't send notification.")
     return Discord(url=DISCORD_WEBHOOK_URL_4)
 
 

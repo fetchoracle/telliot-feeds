@@ -89,6 +89,7 @@ class fusionXPriceService(WebPriceService):
                     logger.warning(msg)
                     return None, None
                 else:
+                    logger.info(f"Price for {asset}/{currency}: {price}")
                     return price, datetime_now_utc()
             except KeyError as e:
                 msg = "Error parsing fusionX Finance response: KeyError: {}".format(e)

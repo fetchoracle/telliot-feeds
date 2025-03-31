@@ -12,32 +12,16 @@ from telliot_feeds.utils.log import get_logger
 logger = get_logger(__name__)
 logger.setLevel(logging.INFO)
 
-POOL_ABI = """
-[
-    {
-        "inputs": [],
-        "name": "slot0",
-        "outputs": [
-            { "internalType": "uint160", "name": "sqrtPriceX96", "type": "uint160" },
-            { "internalType": "int24", "name": "tick", "type": "int24" },
-            { "internalType": "uint16", "name": "observationIndex", "type": "uint16" },
-            { "internalType": "uint16", "name": "observationCardinality", "type": "uint16" },
-            { "internalType": "uint16", "name": "observationCardinalityNext", "type": "uint16" },
-            { "internalType": "uint32", "name": "feeProtocol", "type": "uint32" },
-            { "internalType": "bool", "name": "unlocked", "type": "bool" }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
+POOL_ABI = [
     {
         "inputs": [],
         "name": "token0",
         "outputs": [
-        {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-        }
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
         ],
         "stateMutability": "view",
         "type": "function"
@@ -46,17 +30,39 @@ POOL_ABI = """
         "inputs": [],
         "name": "token1",
         "outputs": [
-        {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-        }
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getReserves",
+        "outputs": [
+            {
+                "internalType": "uint112",
+                "name": "_reserve0",
+                "type": "uint112"
+            },
+            {
+                "internalType": "uint112",
+                "name": "_reserve1",
+                "type": "uint112"
+            },
+            {
+                "internalType": "uint32",
+                "name": "_blockTimestampLast",
+                "type": "uint32"
+            }
         ],
         "stateMutability": "view",
         "type": "function"
     }
 ]
-"""
 
 TOKEN_ABI = """
 [
@@ -75,18 +81,20 @@ TOKEN_ABI = """
 """
 
 supported_pools = {
-    "fetch/usdl": "0xf3dA9A1FF38c6D774e6aA583302A5aB7646b7025",
+    "wpls/dai": "0xE56043671df55dE5CDf8459710433C10324DE0aE",
+    "wpls/usdc": "0x6753560538ECa67617A9Ce605178F788bE7E524E",
+    "wpls/usdt": "0x322Df7921F28F1146Cdf62aFdaC0D6bC0Ab80711",
+    "plsx/dai": "0xB2893ceA8080bF43b7b60B589EDaAb5211D98F23",
+    "hex/usdc": "0xC475332e92561CD58f278E4e2eD76c17D5b50f05",
 }
 
 class PairPriceService(WebPriceService):
-    """9inch V3 RPC Price Service.
-        Tries to fetch the asset price from a pool.
-        Edit self.pair_address to match the asset and currency of the
-        desired pool.
-        This source works only with V3 pools (forks of PancakeSwap, like 9inch).
-        Using stable coin pools we get an asset USD price, like fetch/usdl"""
+    """pulseX RPC Price Service.
+        Tries to fetch the asset price from a pool using the RPC.
+        Edit 'supported pools' if the desired pool is not present.
+        Using stable coin pools we get an asset's USD price, like wpls/dai"""
     def __init__(self, **kwargs: Any) -> None:
-        kwargs["name"] = "9inch V3 price service"
+        kwargs["name"] = "pulseX RPC price service"
         kwargs["url"] = "https://rpc.pulsechain.com"
         self.pair_address = None
         super().__init__(**kwargs)
@@ -122,20 +130,17 @@ class PairPriceService(WebPriceService):
             logger.debug(f"Token0 Symbol: {token0_symbol}, Decimals: {token0_decimals}")
             logger.debug(f"Token1 Symbol: {token1_symbol}, Decimals: {token1_decimals}")
 
-            block_number = w3.eth.block_number
-            block = w3.eth.get_block(block_number)
-            timestamp = block["timestamp"]
+            # Get reserve from pool
+            reserves = pool_contract.functions.getReserves().call()
+            reserve0 = reserves[0]
+            reserve1 = reserves[1]
+            timestamp = reserves[2]
 
-            # Get slot0 data with the price for pool
-            slot0_data = pool_contract.functions.slot0().call()
-            logger.debug(f'slot0_data: {slot0_data}')
-            sqrt_price_x96 = slot0_data[0]
-            logger.debug(f'sqrt_price_x96: {slot0_data[0]}')
-
+            # Determine if asset is token0 or token1 to calculate correct asset price
             if token0_symbol.lower() == asset.lower():
                 # token0 is the asset, so token1 is the currency
                 if token1_symbol.lower() == currency.lower():
-                    price = (sqrt_price_x96 / (2 ** 96)) ** 2 * (10 ** (token1_decimals - token0_decimals))
+                    price = (reserve1 / (10 ** token1_decimals)) / (reserve0 / (10 ** token0_decimals))
                     logger.debug(f"Price of {asset} in {currency}: {price}")
                 else:
                     logger.error(f"Currency {currency} not found in the pool")
@@ -143,7 +148,7 @@ class PairPriceService(WebPriceService):
             elif token1_symbol.lower() == asset.lower():
                 # token1 is the asset, so token0 is the currency
                 if token0_symbol.lower() == currency.lower():
-                    price = ((2 ** 96) / sqrt_price_x96) ** 2 * (10 ** (token0_decimals - token1_decimals))
+                    price = (reserve0 / (10 ** token0_decimals)) / (reserve1 / (10 ** token1_decimals))
                     logger.debug(f"Price of {asset} in {currency}: {price}")
                 else:
                     logger.error(f"Currency {currency} not found in the pool")
@@ -155,12 +160,13 @@ class PairPriceService(WebPriceService):
             logger.info(f"Price of {asset} in {currency}: {price}")
             timestamp = datetime.fromtimestamp(timestamp)
             return float(price), timestamp
+            #return None, None
         except Exception as e:
             logger.critical("Error:", e)
             return None, None
 
 @dataclass
-class NineInchV3Source(PriceSource):
+class PulseXRPC(PriceSource):
     asset: str = ""
     currency: str = ""
     addr: str = ""

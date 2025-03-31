@@ -1,10 +1,7 @@
-import os
 import logging
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
-
-from decimal import Decimal
 
 import requests
 
@@ -21,15 +18,31 @@ dexscreener_supported_pools = {
 #pulsechain exchanges:
 "9inch":{
     "fetch/usdl": "0xf3dA9A1FF38c6D774e6aA583302A5aB7646b7025",
+    "loan/wpls": "0x9570317397Df7d218880a9e0Fc38EcaCDE67d960",
+    "wpls/plsx": "0xB89ea01677529A8bbCECE3a486404880f9463C45",
 },
 "9mm":{
     "fetch/wpls": "0x547998b2119dB28a62Ff91FDD64032f6176e9060",
+    "plsx/wpls": "0x96737676cb25396a9F857272cdDc8E3A346d63da",
 },
 "pulsex":{
     "fetch/wpls": "0xDFB503E2da6D58eFFfB1710AaDf7A97f21EA76ad",
     "wpls/dai": "0xE56043671df55dE5CDf8459710433C10324DE0aE",
     "wpls/usdc": "0x6753560538ECa67617A9Ce605178F788bE7E524E",
     "wpls/usdt": "0x322Df7921F28F1146Cdf62aFdaC0D6bC0Ab80711",
+    "plsx/wpls": "0x1b45b9148791d3a104184Cd5DFE5CE57193a3ee9",
+    "hex/wpls": "0xf1F4ee610b2bAbB05C635F726eF8B0C568c8dc65",
+    "inc/wpls": "0xf808Bb6265e9Ca27002c0A04562Bf50d4FE37EAA",
+    "inc/plsx": "0x7Dbeca4c74d01cd8782D4EF5C05C0769723fb0ea",
+},
+"pulsexv2":{
+    "hex/wpls": "0x19BB45a7270177e303DEe6eAA6F5Ad700812bA98",
+    "hex/usdc": "0xC475332e92561CD58f278E4e2eD76c17D5b50f05",
+    "inc/wpls": "0x5B9661276708202DD1A0dD2346A3856b00d3c251",
+    "inc/plsx": "0xD41E6F7BB349085Ac65107BfB3fAdd49F1CfDe1f",
+    "loan/wpls": "0x6D69654390c70D9e8814B04c69a542632DC93161",
+    "wpls/dai": "0xaE8429918FdBF9a5867e3243697637Dc56aa76A1",
+    "wpls/plsx": "0x149B2C629e652f2E89E11cd57e5d4D77ee166f9F",
 },
 #BASE exchanges:
 "aerodrome":{
@@ -95,7 +108,7 @@ class DexScreenerService(WebPriceService):
         else:
             logger.error(f"Exchange {exchange} not supported")
             return None, None
-        logger.info(f'Fetching {asset}/{currency} in {exchange} for pool {pair_id}')
+        logger.debug(f'Fetching {asset}/{currency} in {exchange} for pool {pair_id}')
 
         request_url = MAINNET_API_URL + f"/latest/dex/pairs/{chain_id}/{pair_id}"
 
@@ -141,6 +154,7 @@ class DexScreenerService(WebPriceService):
             logger.error(f"Invalid 'priceUsd' format: {pair_data['priceUsd']}.")
             return None, None
 
+        logger.info(f"Price of {asset}/{currency} in {exchange}: {price_usd}")
         return price_usd, datetime_now_utc()
 
 

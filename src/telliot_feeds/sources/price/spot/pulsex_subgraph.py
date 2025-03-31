@@ -1,11 +1,8 @@
-import os
-#from dotenv import load_dotenv
+import logging
 
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
-
-from decimal import Decimal
 
 import requests
 
@@ -16,6 +13,7 @@ from telliot_feeds.pricing.price_source import PriceSource
 from telliot_feeds.utils.log import get_logger
 
 logger = get_logger(__name__)
+logger.setLevel(logging.INFO)
 
 pulsex_subgraph_supporten_tokens = {
 #mainnet tokens
@@ -57,7 +55,7 @@ class PulseXSubgraphService(WebPriceService):
 
         """
         self.url = TESTNET_GRAPH if asset.startswith('t*') else MAINNET_GRAPH
-        logger.info(f'Using {self.url} to fetch values')
+        logger.debug(f'Using {self.url} to fetch values')
         
         asset = asset.lower()
         currency = currency.lower()
@@ -117,10 +115,11 @@ class PulseXSubgraphService(WebPriceService):
 
                 if token_data is None:
                     logger.error(f"No data found for the token {token}")
-                    logger.info(f"It is possible that no Liquidity Pool exists including this token ({token})")
+                    logger.error(f"It is possible that no Liquidity Pool exists including this token ({token})")
                     return None, None
 
                 price = float(token_data["derivedUSD"])
+                logger.info(f"price of {asset}/{currency}: {price}")
                 return price, datetime_now_utc()
             except KeyError as e:
                 msg = f"Error parsing Pulsechain Subgraph response: KeyError: {e}"

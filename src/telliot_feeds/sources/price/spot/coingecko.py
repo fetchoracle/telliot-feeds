@@ -150,6 +150,7 @@ class CoinGeckoSpotPriceService(WebPriceService):
 
         try:
             price = float(res[coin_id][currency])
+            logger.info(f"Price for {asset}/{currency}: {price}")
             return price, datetime_now_utc()
         except KeyError as e:
             logger.error(f"Error parsing coingecko api response: KeyError: {e}")
@@ -203,6 +204,7 @@ class CoinGeckoBRC20SpotPriceService(WebPriceService):
 
             try:
                 price = float(response[coin_id][currency])
+                logger.info(f"Price for {asset}/{currency}: {price}")
                 return price, datetime_now_utc()
             except KeyError as e:
                 msg = "Error parsing Coingecko API response: KeyError: {}".format(e)

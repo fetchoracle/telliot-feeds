@@ -31,6 +31,7 @@ class FetchUsdMockSpotPriceService(WebPriceService):
         currency = currency.lower()
 
         if asset == "tfetch" and currency == "usd" and os.getenv("FETCH_USD_MOCK_PRICE") is not None:
+            logger.info(f"Price for {asset}/{currency}: {float(os.getenv('FETCH_USD_MOCK_PRICE', 0.001))}")
             return float(os.getenv("FETCH_USD_MOCK_PRICE", 0.001)), datetime_now_utc()
 
         logger.error(f"Price not found for {asset} in {currency}")

@@ -72,6 +72,7 @@ class CoinMarketCapSpotPriceService(WebPriceService):
 
         try:
             price = data["data"][asset]["quote"][currency]["price"]
+            logger.info(f"Price for {asset}/{currency}: {price}")
             return price, datetime_now_utc()
         except Exception as e:
             msg = f"Error parsing CoinMarketCap API response: Exception: {e}"
