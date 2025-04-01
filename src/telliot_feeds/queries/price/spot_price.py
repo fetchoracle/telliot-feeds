@@ -33,6 +33,7 @@ SPOT_PRICE_PAIRS = [
     "EUR/USD",
     "PLS/USD",
     "TPLS/USD",
+    "PLSTEST/USD",
     "ETH/JPY",
     "ALBT/USD",
     "RAI/USD",

@@ -161,6 +161,12 @@ query_catalog.add_entry(
 )
 
 query_catalog.add_entry(
+     tag="plstest-usd-spot",
+     title="PLSTEST/USD spot price",
+     q=SpotPrice(asset="plstest", currency="usd"),
+ )
+
+query_catalog.add_entry(
     tag="tpls-usd-spot",
     title="tPLS/USD spot price",
     q=SpotPrice(asset="tpls", currency="usd"),
