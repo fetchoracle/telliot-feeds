@@ -15,12 +15,9 @@ plstest_usd_median_feed = DataFeed(
             PulseXRPC(asset="wpls", currency="dai"),
             PulseXRPC(asset="wpls", currency="usdc"),
             PulseXRPC(asset="wpls", currency="usdt"),
-            DexScreenerApiSource(asset="369,pulsex,wpls", currency="dai"),
+            PulseXRPC(asset="wpls2", currency="dai"),
             DexScreenerApiSource(asset="369,pulsexv2,wpls", currency="dai"),
-            DexScreenerApiSource(asset="369,pulsex,wpls", currency="usdc"),
-            DexScreenerApiSource(asset="369,pulsex,wpls", currency="usdt"),
             DexScreenerApiSource(asset="369,pulsexv2,wpls", currency="plsx"),
-            DexScreenerApiSource(asset="369,9inch,wpls", currency="plsx"),
         ],
     ),
 )
