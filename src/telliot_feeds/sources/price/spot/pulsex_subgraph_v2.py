@@ -104,20 +104,30 @@ class PulseXSubgraphv2Service(WebPriceService):
         elif "response" in data:
             response = data["response"]
 
+            logger.debug(f"PulseX Subgraph Response: {response}")
+            if "errors" in response:
+                logger.error(f"PulseX Subgraph Error: {response['errors']}")
+                return None, None
+
             try:
-                if response["data"]["token"] == None:
+
+                token_data = response.get("data", {}).get("token")
+
+                if token_data is None:
                     logger.error(f"No data found for the token {token}")
                     logger.error(f"It is possible that no Liquidity Pool exists including this token ({token})")
                     return None, None
 
-                price = float(response["data"]["token"]["derivedUSD"])
-                logger.info(f"Price for {asset}/{currency}: {price}")
+                price = float(token_data["derivedUSD"])
+                logger.info(f"price of {asset}/{currency}: {price}")
                 return price, datetime_now_utc()
             except KeyError as e:
                 msg = f"Error parsing Pulsechain Subgraph response: KeyError: {e}"
-                if response["data"]["token"] == None:
-                    msg = f"Invalid token address: {token}"
-                logger.critical(msg)
+                logger.error(msg)
+                return None, None
+            except ValueError as e:
+                msg = f"Error converting 'derivedUSD' to float: {e}"
+                logger.error(msg)
                 return None, None
 
         else:
