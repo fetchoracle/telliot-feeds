@@ -43,6 +43,11 @@ from telliot_feeds.utils.discord import submit_or_not, send_discord_msg_telliot,
 
 logger = get_logger(__name__)
 
+fetch_native_token_map = {
+    943: tfetch_usd_median_feed,
+    84532: tfetch_usd_median_feed, #using tfetch while there's no pools in Sepolia
+}
+
 
 class Tellor360Reporter(Stake):
     """Reports values from given datafeeds to a TellorFlex."""
@@ -79,7 +84,8 @@ class Tellor360Reporter(Stake):
         logger.info(f"Reporting with account: {self.acct_addr}")
         
         '''May be updated later depending on Telliot use in other chains with other token addresses'''
-        self.fetch_native_token = tfetch_usd_median_feed if self.chain_id == 943 else fetch_usd_median_feed
+        #self.fetch_native_token = tfetch_usd_median_feed if self.chain_id == 943 else fetch_usd_median_feed
+        self.fetch_native_token = fetch_native_token_map.get(self.chain_id, fetch_usd_median_feed)
 
         self.discord_notification_data = {
             "account": self.acct_addr,
@@ -93,6 +99,15 @@ class Tellor360Reporter(Stake):
             "query": "",
             "price_submitted": 0.0,
         }
+
+        self.is_managed_feed = False
+        if self.datafeed.query.asset in (
+                'lleth',
+                'llpls',
+        ) and self.datafeed.query.currency == 'usd':
+            self.is_managed_feed = True
+            logger.info(f'Price is a managed feed: {self.datafeed.query.asset}/{self.datafeed.query.currency}.'
+                        f' Skipping regular checks.')
 
     async def get_stake_amount(self) -> Tuple[Optional[int], ResponseStatus]:
         """Reads the current stake amount from the oracle contract
@@ -174,6 +189,9 @@ class Tellor360Reporter(Stake):
 
         # deposit stake if stakeAmount in oracle is greater than account stake or
         # a stake in cli is selected thats greater than account stake
+        if self.is_managed_feed:
+            logger.info('Managed feed - Skipping ensure staked.')
+            return True, ResponseStatus()
         chosen_stake_amount = self.stake > staker_details.stake_balance
         if chosen_stake_amount:
             logger.info("Chosen stake is greater than account stake balance")
@@ -205,6 +223,12 @@ class Tellor360Reporter(Stake):
         Return:
         - ResponseStatus: yay or nay
         """
+        #check if managed feed
+        datafeed_ac = self.datafeed.query
+        if self.is_managed_feed:
+            logger.info('Managed feed - Skipping reporter lock.')
+            return ResponseStatus()
+
         staker_balance = self.stake_info.current_staker_balance
         current_stake_amount = self.stake_info.current_stake_amount
         if staker_balance is None or current_stake_amount is None:
