@@ -47,7 +47,8 @@ fetch_native_token_map = {
     943: tfetch_usd_median_feed,
     84532: tfetch_usd_median_feed, #using tfetch while there's no pools in Sepolia
 }
-
+MANAGED_ASSETS = ('lleth', 'llpls')
+MANAGED_CURRENCIES = ('usd',)
 
 class Tellor360Reporter(Stake):
     """Reports values from given datafeeds to a TellorFlex."""
@@ -101,13 +102,12 @@ class Tellor360Reporter(Stake):
         }
 
         self.is_managed_feed = False
-        if self.datafeed.query.asset in (
-                'lleth',
-                'llpls',
-        ) and self.datafeed.query.currency == 'usd':
-            self.is_managed_feed = True
-            logger.info(f'Price is a managed feed: {self.datafeed.query.asset}/{self.datafeed.query.currency}.'
-                        f' Skipping regular checks.')
+        if self.datafeed:# is not None:
+            query = self.datafeed.query
+            if query.asset in MANAGED_ASSETS and query.currency in MANAGED_CURRENCIES:
+                self.is_managed_feed = True
+                logger.info(f'Price is a managed feed: {query.asset}/{query.currency}.'
+                            f' Skipping regular checks.')
 
     async def get_stake_amount(self) -> Tuple[Optional[int], ResponseStatus]:
         """Reads the current stake amount from the oracle contract
@@ -224,9 +224,8 @@ class Tellor360Reporter(Stake):
         - ResponseStatus: yay or nay
         """
         #check if managed feed
-        datafeed_ac = self.datafeed.query
         if self.is_managed_feed:
-            logger.info('Managed feed - Skipping reporter lock.')
+            logger.info('Managed feed - Skipping reporter lock check.')
             return ResponseStatus()
 
         staker_balance = self.stake_info.current_staker_balance
