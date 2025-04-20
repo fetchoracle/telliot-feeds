@@ -102,7 +102,7 @@ class Tellor360Reporter(Stake):
         }
 
         self.is_managed_feed = False
-        if self.datafeed:# is not None:
+        if self.datafeed:
             query = self.datafeed.query
             if query.asset in MANAGED_ASSETS and query.currency in MANAGED_CURRENCIES:
                 self.is_managed_feed = True
