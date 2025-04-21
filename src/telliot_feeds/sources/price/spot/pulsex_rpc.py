@@ -1,4 +1,5 @@
 import logging
+from curses.ascii import isdigit
 from dataclasses import dataclass, field
 from typing import Any
 from datetime import datetime
@@ -86,6 +87,8 @@ supported_pools = {
     "wpls/usdt": "0x322Df7921F28F1146Cdf62aFdaC0D6bC0Ab80711",
     "plsx/dai": "0xB2893ceA8080bF43b7b60B589EDaAb5211D98F23",
     "hex/usdc": "0xC475332e92561CD58f278E4e2eD76c17D5b50f05",
+    #v2 pools
+    "wpls2/dai": "0x146E1f1e060e5b5016Db0D118D2C5a11A240ae32",
 }
 
 class PairPriceService(WebPriceService):
@@ -108,6 +111,12 @@ class PairPriceService(WebPriceService):
             else:
                 logger.error(f"Asset: {asset} and Currency: {currency} not in supported pools list")
                 return None, None
+
+            #Determine if asset is v2 to match token name in pool
+            logger.debug(f'asset: {asset}')
+            if asset[-1].isdigit():
+                asset = asset[:-1]
+                logger.debug(f'asset without sufix: {asset}')
 
             pool_contract = w3.eth.contract(address=self.pair_address, abi=POOL_ABI)
             logger.debug(f"Fetching {asset}/{currency} in {self.pair_address} pool")
@@ -132,6 +141,7 @@ class PairPriceService(WebPriceService):
 
             # Get reserve from pool
             reserves = pool_contract.functions.getReserves().call()
+            logger.debug(reserves)
             reserve0 = reserves[0]
             reserve1 = reserves[1]
             timestamp = reserves[2]
@@ -139,6 +149,7 @@ class PairPriceService(WebPriceService):
             # Determine if asset is token0 or token1 to calculate correct asset price
             if token0_symbol.lower() == asset.lower():
                 # token0 is the asset, so token1 is the currency
+                logger.debug(f"Token 0 is the asset! {asset}")
                 if token1_symbol.lower() == currency.lower():
                     price = (reserve1 / (10 ** token1_decimals)) / (reserve0 / (10 ** token0_decimals))
                     logger.debug(f"Price of {asset} in {currency}: {price}")
@@ -147,6 +158,7 @@ class PairPriceService(WebPriceService):
                     return None, None
             elif token1_symbol.lower() == asset.lower():
                 # token1 is the asset, so token0 is the currency
+                logger.debug(f"Token 1 is the asset! {asset}")
                 if token0_symbol.lower() == currency.lower():
                     price = (reserve0 / (10 ** token0_decimals)) / (reserve1 / (10 ** token1_decimals))
                     logger.debug(f"Price of {asset} in {currency}: {price}")

@@ -82,6 +82,8 @@ from telliot_feeds.feeds.op_usd_feed import op_usd_median_feed
 from telliot_feeds.feeds.ousd_usd_feed import ousd_usd_median_feed
 from telliot_feeds.feeds.pls_usd_feed import pls_usd_median_feed
 from telliot_feeds.feeds.tpls_usd_feed import tpls_usd_median_feed
+from telliot_feeds.feeds.lleth_usd_feed import lleth_usd_median_feed
+from telliot_feeds.feeds.llpls_usd_feed import llpls_usd_median_feed
 from telliot_feeds.feeds.primeeth_eth_feed import primeeth_eth_median_feed
 from telliot_feeds.feeds.pufeth_usd_feed import pufeth_usd_median_feed
 from telliot_feeds.feeds.pyth_usd_feed import pyth_usd_median_feed
@@ -222,6 +224,8 @@ CATALOG_FEEDS: Dict[str, DataFeed[Any]] = {
     "twap-eth-usd-example": twap_30d_example_manual_feed,
     "pls-usd-spot": pls_usd_median_feed,
     "tpls-usd-spot": tpls_usd_median_feed,
+    "llpls-usd-spot": llpls_usd_median_feed,
+    "lleth-usd-spot": lleth_usd_median_feed,
     "eth-usd-spot": eth_usd_median_feed,
     "btc-usd-spot": btc_usd_median_feed,
     "trb-usd-spot": trb_usd_median_feed,

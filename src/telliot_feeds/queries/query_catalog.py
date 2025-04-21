@@ -161,6 +161,18 @@ query_catalog.add_entry(
 )
 
 query_catalog.add_entry(
+     tag="llpls-usd-spot",
+     title="LLPLS/USD spot price",
+     q=SpotPrice(asset="llpls", currency="usd"),
+ )
+
+query_catalog.add_entry(
+     tag="lleth-usd-spot",
+     title="LLETH/USD spot price",
+     q=SpotPrice(asset="lleth", currency="usd"),
+ )
+
+query_catalog.add_entry(
     tag="tpls-usd-spot",
     title="tPLS/USD spot price",
     q=SpotPrice(asset="tpls", currency="usd"),
