@@ -47,7 +47,7 @@ fetch_native_token_map = {
     943: tfetch_usd_median_feed,
     84532: tfetch_usd_median_feed, #using tfetch while there's no pools in Sepolia
 }
-MANAGED_ASSETS = ('lleth', 'llpls')
+MANAGED_ASSETS = ('lleth', 'llpls', 'testing')
 MANAGED_CURRENCIES = ('usd',)
 
 class Tellor360Reporter(Stake):
@@ -84,8 +84,6 @@ class Tellor360Reporter(Stake):
         self.acct_addr = to_checksum_address(self.account.address)
         logger.info(f"Reporting with account: {self.acct_addr}")
         
-        '''May be updated later depending on Telliot use in other chains with other token addresses'''
-        #self.fetch_native_token = tfetch_usd_median_feed if self.chain_id == 943 else fetch_usd_median_feed
         self.fetch_native_token = fetch_native_token_map.get(self.chain_id, fetch_usd_median_feed)
 
         self.discord_notification_data = {
