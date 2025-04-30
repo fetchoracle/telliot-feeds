@@ -167,6 +167,12 @@ query_catalog.add_entry(
  )
 
 query_catalog.add_entry(
+     tag="testing-usd-spot",
+     title="TESTING/USD spot price",
+     q=SpotPrice(asset="testing", currency="usd"),
+ )
+
+query_catalog.add_entry(
      tag="lleth-usd-spot",
      title="LLETH/USD spot price",
      q=SpotPrice(asset="lleth", currency="usd"),
